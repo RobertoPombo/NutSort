@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 using GTRC_WPF;
@@ -21,6 +22,16 @@ namespace NutSort.Windows
             Height = GlobalWinValues.screenHeight * 0.75;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1;
+            Closing += CloseWindow;
+            board.Solve();
+        }
+
+        public void CloseWindow(object? sender, CancelEventArgs e)
+        {
+            foreach (Board board in Board.List)
+            {
+                board.StopSolving();
+            }
         }
     }
 }

@@ -84,6 +84,31 @@ namespace NutSort.Models
             }
         }
 
+        public void Solve()
+        {
+            if (InitialBoardstate?.Boardstates.Count > 0)
+            {
+                foreach (Move move in InitialBoardstate.Boardstates[0].PossibleMoves)
+                {
+                    move.Execute(InitialBoardstate.Boardstates[0]);
+                    Solutions.Add(new Solution(InitialBoardstate.Boardstates[0]));
+                    move.Undo(InitialBoardstate.Boardstates[0]);
+                }
+                foreach (Solution solution in Solutions)
+                {
+                    new Thread(solution.Solve).Start();
+                }
+            }
+        }
+
+        public void StopSolving()
+        {
+            foreach (Solution solution in Solutions)
+            {
+                solution.StopSolving();
+            }
+        }
+
         public static void LoadJson()
         {
             NutColor.LoadJson();

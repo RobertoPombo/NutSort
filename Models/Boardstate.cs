@@ -55,50 +55,6 @@ namespace NutSort.Models
             }
         }
 
-        public void TryMakeNextMove()
-        {
-            if (Solution.IsFinished)
-            {
-                if (Solution.Board.ShortestSolution is null || Solution.Boardstates.Count < Solution.Board.ShortestSolution.Boardstates.Count)
-                {
-                    Solution.Board.ShortestSolution = Solution;
-                }
-                Solution.Board.Solutions.Add(new(Solution.Boardstates));
-            }
-            else if (NextMoveIndex < PossibleMoves.Count || (Solution.Board.ShortestSolution is not null && Solution.Boardstates.Count > Solution.Board.ShortestSolution.Boardstates.Count))
-            {
-                if (NextMoveIndex > 0)
-                {
-                    PossibleMoves[NextMoveIndex - 1].Undo(this);
-                }
-                PossibleMoves[NextMoveIndex].Execute(this);
-                NextMoveIndex++;
-                for (int boardstateNr1 = 0; boardstateNr1 < Solution.Boardstates.Count - 1; boardstateNr1++)
-                {
-                    if (Solution.Boardstates[boardstateNr1].Id == Id)
-                    {
-                        for (int boardstateNr2 = boardstateNr1 + 1; boardstateNr2 < Solution.Boardstates.Count; boardstateNr2++)
-                        {
-                            DeleteLatestBoardstate();
-                        }
-                        Solution.Boardstates[^1].TryMakeNextMove();
-                        return;
-                    }
-                }
-                Solution.Boardstates.Add(new(Stacks));
-                Solution.Boardstates[^1].TryMakeNextMove();
-            }
-            else if (NextMoveIndex >= PossibleMoves.Count)
-            {
-                Solution.Board.Solutions.Remove(Solution);
-            }
-            else
-            {
-                DeleteLatestBoardstate();
-                Solution.Boardstates[^1].TryMakeNextMove();
-            }
-        }
-
         private void UpdatePossibleMoves()
         {
             for (byte fromStackNr = 0; fromStackNr < Stacks.Count; fromStackNr++)
@@ -213,18 +169,6 @@ namespace NutSort.Models
                 else if (stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
             }
             return count;
-        }
-
-        private void DeleteLatestBoardstate()
-        {
-            if (Solution.Boardstates.Count > 0)
-            {
-                foreach (Nut nut in Solution.Nuts)
-                {
-                    nut.Positions.RemoveAt(nut.Positions.Count - 1);
-                }
-                Solution.Boardstates.RemoveAt(Solution.Boardstates.Count - 1);
-            }
         }
     }
 }
