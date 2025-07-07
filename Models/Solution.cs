@@ -61,7 +61,8 @@ namespace NutSort.Models
                 stacks.Add(new() { Nuts = nuts });
             }
             Boardstates.Add(new(stacks));
-            Boardstates[^1].Solution = this;
+            Boardstates[0].Solution = this;
+            Boardstates[0].TryMakeNextMove();
         }
 
         public List<Boardstate> Boardstates { get; set; } = [];

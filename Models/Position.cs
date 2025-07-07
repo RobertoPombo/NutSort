@@ -6,7 +6,7 @@ namespace NutSort.Models
     {
         public Position() { }
 
-        public Stack Stack { get; set; } = new();
+        public byte StackNr { get; set; } = byte.MinValue;
         public byte Level { get; set; } = byte.MinValue;
     }
 }

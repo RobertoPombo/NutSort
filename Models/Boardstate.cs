@@ -8,15 +8,15 @@ namespace NutSort.Models
         public Boardstate() { }
         public Boardstate(List<Stack> stacks)
         {
-            foreach (Stack _stack in stacks)
+            for (byte stackNr = 0; stackNr < stacks.Count; stackNr++)
             {
                 List<Nut> nuts = [];
-                foreach (Nut nut in _stack.Nuts) { nuts.Add(nut); }
+                foreach (Nut nut in stacks[stackNr].Nuts) { nuts.Add(nut); }
                 Stack stack = new() { Nuts = nuts, Boardstate = this };
                 Stacks.Add(stack);
                 for (byte nutNr = 0; nutNr < stack.Nuts.Count; nutNr++)
                 {
-                    stack.Nuts[nutNr].Positions.Add(new() { Stack = stack, Level = nutNr });
+                    stack.Nuts[nutNr].Positions.Add(new() { StackNr = stackNr, Level = nutNr });
                 }
             }
             UpdatePossibleMoves();
@@ -73,6 +73,18 @@ namespace NutSort.Models
                 }
                 PossibleMoves[NextMoveIndex].Execute(this);
                 NextMoveIndex++;
+                for (int boardstateNr1 = 0; boardstateNr1 < Solution.Boardstates.Count - 1; boardstateNr1++)
+                {
+                    if (Solution.Boardstates[boardstateNr1].Id == Id)
+                    {
+                        for (int boardstateNr2 = boardstateNr1 + 1; boardstateNr2 < Solution.Boardstates.Count; boardstateNr2++)
+                        {
+                            DeleteLatestBoardstate();
+                        }
+                        Solution.Boardstates[^1].TryMakeNextMove();
+                        return;
+                    }
+                }
                 Solution.Boardstates.Add(new(Stacks));
                 Solution.Boardstates[^1].TryMakeNextMove();
             }
@@ -82,28 +94,39 @@ namespace NutSort.Models
             }
             else
             {
-                foreach (Nut nut in Solution.Nuts)
-                {
-                    nut.Positions.RemoveAt(nut.Positions.Count - 1);
-                }
-                Solution.Boardstates.RemoveAt(Solution.Boardstates.Count - 1);
+                DeleteLatestBoardstate();
                 Solution.Boardstates[^1].TryMakeNextMove();
             }
         }
 
         private void UpdatePossibleMoves()
         {
-            for (int fromStackNr = 0; fromStackNr < Stacks.Count; fromStackNr++)
+            for (byte fromStackNr = 0; fromStackNr < Stacks.Count; fromStackNr++)
             {
                 Stack fromStack = Stacks[fromStackNr];
-                for (int toStackNr = 0; toStackNr < Stacks.Count; toStackNr++)
+                for (byte toStackNr = 0; toStackNr < Stacks.Count; toStackNr++)
                 {
                     Stack toStack = Stacks[toStackNr];
                     if ((toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
                         fromStackNr != toStackNr && !toStack.IsFull && !fromStack.IsFinished &&
                         (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty))
                     {
-                        PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
+                        bool foundReverseMove = false;
+                        int fromStackLevel = fromStack.Nuts.Count;
+                        int toStackLevel = toStack.Nuts.Count + 1;
+                        List<Position> positions = fromStack.TopNut?.Positions ?? [];
+                        for (int positionNr = 1; positionNr < positions.Count; positionNr++)
+                        {
+                            if (fromStackNr == positions[positionNr].StackNr && toStackNr == positions[positionNr - 1].StackNr && fromStackLevel == positions[positionNr].Level && toStackLevel == positions[positionNr - 1].Level)
+                            {
+                                foundReverseMove = true;
+                                break;
+                            }
+                        }
+                        if (!foundReverseMove)
+                        {
+                            PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
+                        }
                     }
                 }
             }
@@ -180,7 +203,7 @@ namespace NutSort.Models
             }
         }
 
-        public int GetTopNutsCountByColor(NutColor? nutColor)
+        private int GetTopNutsCountByColor(NutColor? nutColor)
         {
             int count = 0;
             if (nutColor is null) { return count; }
@@ -190,6 +213,18 @@ namespace NutSort.Models
                 else if (stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
             }
             return count;
+        }
+
+        private void DeleteLatestBoardstate()
+        {
+            if (Solution.Boardstates.Count > 0)
+            {
+                foreach (Nut nut in Solution.Nuts)
+                {
+                    nut.Positions.RemoveAt(nut.Positions.Count - 1);
+                }
+                Solution.Boardstates.RemoveAt(Solution.Boardstates.Count - 1);
+            }
         }
     }
 }
