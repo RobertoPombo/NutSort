@@ -112,7 +112,84 @@ namespace NutSort.Models
 
         private void PrioritizeMoves()
         {
-            // todo not yet implemented: Siehe Excel-Ideen
+            for (int moveNr1 = 0; moveNr1 < PossibleMoves.Count - 1; moveNr1++)
+            {
+                for (int moveNr2 = moveNr1 + 1; moveNr2 < PossibleMoves.Count; moveNr2++)
+                {
+                    Stack fromStack1 = Stacks[PossibleMoves[moveNr1].FromStackNr];
+                    Stack toStack1 = Stacks[PossibleMoves[moveNr1].ToStackNr];
+                    Stack fromStack2 = Stacks[PossibleMoves[moveNr2].FromStackNr];
+                    Stack toStack2 = Stacks[PossibleMoves[moveNr2].ToStackNr];
+                    bool isEmpty1 = toStack1.IsEmpty;
+                    bool isEmpty2 = toStack2.IsEmpty;
+                    if (isEmpty1 && !isEmpty2)
+                    {
+                        (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                    }
+                    else if (isEmpty1 == !isEmpty2)
+                    {
+                        int fromStackHeight1 = fromStack1.Nuts.Count;
+                        int fromStackHeight2 = fromStack2.Nuts.Count;
+                        if (fromStackHeight1 > 1 && fromStackHeight2 == 1)
+                        {
+                            (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                        }
+                        else if ((fromStackHeight1 == fromStackHeight2) || fromStackHeight1 > 1)
+                        {
+                            int topNutsCountByColor1 = GetTopNutsCountByColor(fromStack1.TopNut?.NutColor ?? null);
+                            int topNutsCountByColor2 = GetTopNutsCountByColor(fromStack2.TopNut?.NutColor ?? null);
+                            if (topNutsCountByColor1 < topNutsCountByColor2)
+                            {
+                                (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                            }
+                            else if (topNutsCountByColor1 == topNutsCountByColor2)
+                            {
+                                if (fromStack1.TopNutCount < fromStack2.TopNutCount)
+                                {
+                                    (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                                }
+                                else if (fromStack1.TopNutCount == fromStack2.TopNutCount)
+                                {
+                                    bool isMonochromatic1 = toStack1.IsMonochromatic;
+                                    bool isMonochromatic2 = toStack2.IsMonochromatic;
+                                    if (!isMonochromatic1 && isMonochromatic2)
+                                    {
+                                        (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                                    }
+                                    else if (isMonochromatic1 == isMonochromatic2)
+                                    {
+                                        if (fromStackHeight1 > fromStackHeight2)
+                                        {
+                                            (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                                        }
+                                        else if (fromStackHeight1 == fromStackHeight2)
+                                        {
+                                            int toStackHeight1 = toStack1.Nuts.Count;
+                                            int toStackHeight2 = toStack2.Nuts.Count;
+                                            if (toStackHeight1 < toStackHeight2)
+                                            {
+                                                (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public int GetTopNutsCountByColor(NutColor? nutColor)
+        {
+            int count = 0;
+            if (nutColor is null) { return count; }
+            foreach (Stack stack in Stacks)
+            {
+                if (stack.TopNut is null) { break; }
+                else if (stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
+            }
+            return count;
         }
     }
 }

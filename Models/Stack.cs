@@ -23,11 +23,11 @@ namespace NutSort.Models
         {
             get
             {
-                if (IsEmpty) { return 0; }
+                if (TopNut is null) { return 0; }
                 else
                 {
                     byte amount = 1;
-                    NutColor nutColor = TopNut!.NutColor;
+                    NutColor nutColor = TopNut.NutColor;
                     foreach (Nut nut in Nuts)
                     {
                         if (nut.NutColor != nutColor) { break; }
