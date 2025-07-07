@@ -104,16 +104,17 @@ namespace NutSort.Models
             GlobalValues.CurrentLogText = "Boards saved.";
         }
 
-        public void CreateInitialBoardstate()
+        public void CreateInitialBoardstate(string id)
         {
             NutColor.LoadJson();
+            string[] ids = id.Split('|');
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
             List<Nut> nuts = [];
             byte colorNr = 0;
-            for (byte nutNr = 0; nutNr < colorCount * nutSameColorCount; nutNr++)
+            for (byte nutNr = 0; nutNr < ids.Length; nutNr++)
             {
-                nuts.Add(new(NutColor.List[colorNr]));
+                nuts.Add(new(NutColor.GetByName(ids[nutNr]) ?? NutColor.List[colorNr]));
                 InitialBoardstate.Nuts.Add(nuts[^1]);
                 colorNr++;
                 if (colorNr >= colorCount) { colorNr = 0; }
