@@ -6,20 +6,11 @@ namespace NutSort.Models
     public class Stack
     {
         public Stack() { }
-        public Stack(List<Nut> nuts, Boardstate boardstate)
-        {
-            Nuts = nuts;
-            Boardstate = boardstate;
-            for (byte nutNr = 0; nutNr < Nuts.Count; nutNr++)
-            {
-                Nuts[nutNr].Positions.Add(new(this, nutNr));
-            }
-        }
 
-        [JsonIgnore] public Boardstate Boardstate { get; set; } = new();
+        public Boardstate Boardstate { get; set; } = new();
         public List<Nut> Nuts { get; set; } = [];
 
-        public Nut? TopNut
+        [JsonIgnore] public Nut? TopNut
         {
             get
             {
@@ -28,7 +19,7 @@ namespace NutSort.Models
             }
         }
 
-        public byte TopNutCount
+        [JsonIgnore] public byte TopNutCount
         {
             get
             {
@@ -47,17 +38,17 @@ namespace NutSort.Models
             }
         }
 
-        public bool IsEmpty
+        [JsonIgnore] public bool IsEmpty
         {
             get { return Nuts.Count == 0; }
         }
 
-        public bool IsFull
+        [JsonIgnore] public bool IsFull
         {
             get { return Nuts.Count == Boardstate.Solution.Board.StackHeight; }
         }
 
-        public bool IsMonochromatic
+        [JsonIgnore] public bool IsMonochromatic
         {
             get
             {
@@ -71,7 +62,7 @@ namespace NutSort.Models
             }
         }
 
-        public bool IsFinished
+        [JsonIgnore] public bool IsFinished
         {
             get
             {

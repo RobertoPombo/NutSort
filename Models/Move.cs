@@ -5,11 +5,6 @@ namespace NutSort.Models
     public class Move
     {
         public Move() { }
-        public Move(int fromStackNr, int toStackNr)
-        {
-            FromStackNr = fromStackNr;
-            ToStackNr = toStackNr;
-        }
 
         public int FromStackNr { get; set; } = 0;
         public int ToStackNr { get; set; } = 0;
@@ -30,8 +25,16 @@ namespace NutSort.Models
 
         private static void MoveNut(Stack fromStack, Stack toStack)
         {
-            toStack.Nuts.Add(fromStack.Nuts[^1]);
-            fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);
+            if (fromStack.TopNut is not null)
+            {
+                if (fromStack.TopNut.Positions.Count > 0)
+                {
+                    fromStack.TopNut.Positions[^1].Stack = toStack;
+                    fromStack.TopNut.Positions[^1].Level = (byte)toStack.Nuts.Count;
+                }
+                toStack.Nuts.Add(fromStack.TopNut);
+                fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);
+            }
         }
     }
 }

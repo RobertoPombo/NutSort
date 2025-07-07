@@ -8,19 +8,26 @@ namespace NutSort.Models
         public Boardstate() { }
         public Boardstate(List<Stack> stacks)
         {
-            foreach (Stack _stack in Stacks)
+            foreach (Stack _stack in stacks)
             {
-                Stack stack = new(_stack.Nuts, this);
+                List<Nut> nuts = [];
+                foreach (Nut nut in _stack.Nuts) { nuts.Add(nut); }
+                Stack stack = new() { Nuts = nuts, Boardstate = this };
                 Stacks.Add(stack);
+                for (byte nutNr = 0; nutNr < stack.Nuts.Count; nutNr++)
+                {
+                    stack.Nuts[nutNr].Positions.Add(new() { Stack = stack, Level = nutNr });
+                }
             }
             UpdatePossibleMoves();
         }
 
-        [JsonIgnore] public Solution Solution { get; set; } = new();
+        public Solution Solution { get; set; } = new();
         public List<Stack> Stacks { get; set; } = [];
         public List<Move> PossibleMoves { get; set; } = [];
         public int NextMoveIndex { get; set; } = 0;
-        public string Id
+
+        [JsonIgnore] public string Id
         {
             get
             {
@@ -36,7 +43,7 @@ namespace NutSort.Models
             }
         }
 
-        public bool IsFinished
+        [JsonIgnore] public bool IsFinished
         {
             get
             {
@@ -52,9 +59,13 @@ namespace NutSort.Models
         {
             if (Solution.IsFinished)
             {
-                // todo not yet implemented: Solution deepcopy erstellen
+                if (Solution.Board.ShortestSolution is null || Solution.Boardstates.Count < Solution.Board.ShortestSolution.Boardstates.Count)
+                {
+                    Solution.Board.ShortestSolution = Solution;
+                }
+                Solution.Board.Solutions.Add(new(Solution.Boardstates));
             }
-            else if (NextMoveIndex < PossibleMoves.Count)
+            else if (NextMoveIndex < PossibleMoves.Count || (Solution.Board.ShortestSolution is not null && Solution.Boardstates.Count > Solution.Board.ShortestSolution.Boardstates.Count))
             {
                 if (NextMoveIndex > 0)
                 {
@@ -62,10 +73,21 @@ namespace NutSort.Models
                 }
                 PossibleMoves[NextMoveIndex].Execute(this);
                 NextMoveIndex++;
+                Solution.Boardstates.Add(new(Stacks));
+                Solution.Boardstates[^1].TryMakeNextMove();
+            }
+            else if (NextMoveIndex >= PossibleMoves.Count)
+            {
+                Solution.Board.Solutions.Remove(Solution);
             }
             else
             {
-                // todo not yet implemented: Diesen Boardstate löschen und beim vorherigen Boardstate .TryMakeNextMove() aufrufen
+                foreach (Nut nut in Solution.Nuts)
+                {
+                    nut.Positions.RemoveAt(nut.Positions.Count - 1);
+                }
+                Solution.Boardstates.RemoveAt(Solution.Boardstates.Count - 1);
+                Solution.Boardstates[^1].TryMakeNextMove();
             }
         }
 
@@ -78,10 +100,10 @@ namespace NutSort.Models
                 {
                     Stack toStack = Stacks[toStackNr];
                     if ((toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
-                        fromStackNr != toStackNr && !fromStack.IsEmpty && !toStack.IsFull && !fromStack.IsFinished &&
+                        fromStackNr != toStackNr && !toStack.IsFull && !fromStack.IsFinished &&
                         (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty))
                     {
-                        PossibleMoves.Add(new (fromStackNr, toStackNr));
+                        PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
                     }
                 }
             }
@@ -90,7 +112,7 @@ namespace NutSort.Models
 
         private void PrioritizeMoves()
         {
-            // todo not yet implemented: Siehe Excel
+            // todo not yet implemented: Siehe Excel-Ideen
         }
     }
 }

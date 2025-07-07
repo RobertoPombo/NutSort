@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1 d17.14
+VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NutSort", "NutSort.csproj", "{AA8550E0-CD2C-4DAF-88E8-E83443276678}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTRC_WPF", "..\..\GTRC Projekte\GTRC-WPF\GTRC_WPF.csproj", "{8FA2F867-5FBE-E3CC-49DE-3F7885704C09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AA8550E0-CD2C-4DAF-88E8-E83443276678}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA8550E0-CD2C-4DAF-88E8-E83443276678}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA8550E0-CD2C-4DAF-88E8-E83443276678}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FA2F867-5FBE-E3CC-49DE-3F7885704C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FA2F867-5FBE-E3CC-49DE-3F7885704C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FA2F867-5FBE-E3CC-49DE-3F7885704C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FA2F867-5FBE-E3CC-49DE-3F7885704C09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

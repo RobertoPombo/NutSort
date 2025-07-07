@@ -5,19 +5,45 @@ namespace NutSort.Models
 {
     public class Nut
     {
-        private static int nextId = -1;
+        private static int nextId = 0;
 
         public Nut() { }
         public Nut(NutColor nutColor)
         {
-            nextId++;
             Id = nextId;
             NutColor = nutColor;
-            NutColor.List.Add(NutColor);
         }
 
-        public int Id { get; set; } = -1;
-        public NutColor NutColor { get; set; } = new();
-        [JsonIgnore] public List<Position> Positions { get; set; } = [];
+        private int id = -1;
+        public int Id
+        {
+            get { return id; }
+            set { id = value; nextId = Math.Max(value + 1, nextId + 1); }
+        }
+
+        private NutColor nutColor = new();
+        public NutColor NutColor
+        {
+            get { return nutColor; }
+            set
+            {
+                bool found = false;
+                foreach (NutColor _nutColor in NutColor.List)
+                {
+                    if (_nutColor.Name == value.Name)
+                    {
+                        nutColor = _nutColor;
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    nutColor = value;
+                    NutColor.List.Add(nutColor);
+                }
+            }
+        }
+
+        public List<Position> Positions { get; set; } = [];
     }
 }

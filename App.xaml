@@ -2,8 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:NutSort"
-             StartupUri="MainWindow.xaml">
+             xmlns:viewModel="clr-namespace:NutSort.ViewModels"
+             xmlns:view="clr-namespace:NutSort.Windows"
+             StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/TabItemStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/CheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/RadioButtonStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/ToggleButtonStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/LabelStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/LabelDrawingStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/TextBlockStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/ComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/ComboBoxTableDesignStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/ListBoxStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/DataGridStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <FontFamily x:Key="Font_GTRC">pack://application:,,,/GTRC_WPF;component/Fonts/#Metropolis</FontFamily>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
