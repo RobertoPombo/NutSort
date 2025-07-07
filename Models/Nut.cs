@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
 namespace NutSort.Models
 {
@@ -8,10 +7,10 @@ namespace NutSort.Models
         private static int nextId = 0;
 
         public Nut() { }
-        public Nut(NutColor nutColor)
+        public Nut(NutColor _nutColor)
         {
             Id = nextId;
-            NutColor = nutColor;
+            nutColor = _nutColor;
         }
 
         private int id = -1;
@@ -27,20 +26,13 @@ namespace NutSort.Models
             get { return nutColor; }
             set
             {
-                bool found = false;
-                foreach (NutColor _nutColor in NutColor.List)
+                NutColor? _nutColor = NutColor.GetByName(value.Name);
+                if (_nutColor is null)
                 {
-                    if (_nutColor.Name == value.Name)
-                    {
-                        nutColor = _nutColor;
-                        found = true;
-                    }
-                }
-                if (!found)
-                {
+                    NutColor.List.Add(value);
                     nutColor = value;
-                    NutColor.List.Add(nutColor);
                 }
+                else { nutColor = _nutColor; }
             }
         }
 

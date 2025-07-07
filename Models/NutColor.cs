@@ -19,6 +19,15 @@ namespace NutSort.Models
 
         [JsonIgnore] public System.Drawing.Color Preview { get { return System.Drawing.Color.FromArgb(Red, Green, Blue); } }
 
+        public static NutColor? GetByName(string name)
+        {
+            foreach (NutColor nutColor in List)
+            {
+                if (nutColor.Name.ToLower() == name.ToLower()) { return nutColor; }
+            }
+            return null;
+        }
+
         public static void LoadJson()
         {
             if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(new List<NutColor>(), Formatting.Indented), Encoding.Unicode); }

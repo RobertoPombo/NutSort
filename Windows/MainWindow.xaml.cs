@@ -11,10 +11,10 @@ namespace NutSort.Windows
         public MainWindow()
         {
             GlobalValues.CreateDirectories();
-            Board.LoadJson();
-            //Board board = new();
-            //board.CreateInitialBoardstate();
-            //Board.List.Add(board);
+            //Board.LoadJson();
+            Board board = new();
+            board.CreateInitialBoardstate();
+            Board.List.Add(board);
             Board.SaveJson();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.75;
