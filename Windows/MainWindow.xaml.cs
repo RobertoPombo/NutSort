@@ -17,10 +17,10 @@ namespace NutSort.Windows
             GlobalValues.CreateDirectories();
             NutColor.LoadJson();
             //Board.LoadJson();
-            //Board board = new() { StackCount = 11, StackHeight = 4, NutSameColorCount = 4, ColorCount = 9, MaxColumnsCount = 5 };
-            //board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|blass|grün|grün|hellblau|rosa|grau|gelb|hellblau|blass|lila|grau|rosa|lila|blass|orange|grau|schwarz|rosa|grün|grau|blass|schwarz|gelb|lila|grün|orange|lila|rosa|gelb|hellblau|gelb|hellblau|||||||||");
-            Board board = new() { StackCount = 4, StackHeight = 4, NutSameColorCount = 2, ColorCount = 4, MaxColumnsCount = 5 };
-            board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|grün|grün|hellblau|hellblau|");
+            Board board = new() { StackCount = 11, StackHeight = 4, NutSameColorCount = 4, ColorCount = 9, MaxColumnsCount = 5 };
+            board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|blass|grün|grün|hellblau|rosa|grau|gelb|hellblau|blass|lila|grau|rosa|lila|blass|orange|grau|schwarz|rosa|grün|grau|blass|schwarz|gelb|lila|grün|orange|lila|rosa|gelb|hellblau|gelb|hellblau|||||||||");
+            //Board board = new() { StackCount = 4, StackHeight = 4, NutSameColorCount = 2, ColorCount = 4, MaxColumnsCount = 5 };
+            //board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|grün|grün|hellblau|hellblau|");
             Board.List.Add(board);
             Board.SaveJson();
             UpdateThemeColors();

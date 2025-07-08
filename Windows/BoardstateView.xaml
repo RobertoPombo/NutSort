@@ -46,7 +46,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{DynamicResource colorForeground}" Height="Auto">
+                    <Grid Background="Transparent" Height="Auto">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
@@ -63,7 +63,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <Label Background="{DynamicResource colorBackground_Transp80}" Width="10" Height="20"/>
+                                        <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -81,7 +81,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,1"/>
+                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
