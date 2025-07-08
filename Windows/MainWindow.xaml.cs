@@ -1,9 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Text;
 using System.Windows;
+using Newtonsoft.Json;
 
-using GTRC_WPF;
 using NutSort.Models;
+using GTRC_WPF;
 
 namespace NutSort.Windows
 {
@@ -20,6 +23,7 @@ namespace NutSort.Windows
             board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|grün|grün|hellblau|hellblau|");
             Board.List.Add(board);
             Board.SaveJson();
+            UpdateThemeColors();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.3;
             Height = GlobalWinValues.screenHeight * 0.25;
@@ -35,6 +39,25 @@ namespace NutSort.Windows
             {
                 board.StopSolving();
             }
+        }
+
+        public void UpdateThemeColors()
+        {
+            GlobalWinValues.UpdateWpfColors(this, LoadThemeColorJson());
+        }
+
+        public static List<GTRC_Basics.Models.Color> LoadThemeColorJson()
+        {
+            List<GTRC_Basics.Models.Color> list = [];
+            string path = GlobalValues.ConfigDirectory + "ThemeColor.json";
+            if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(new List<GTRC_Basics.Models.Color>(), Formatting.Indented), Encoding.Unicode); }
+            try
+            {
+                list = JsonConvert.DeserializeObject<List<GTRC_Basics.Models.Color>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
+                GlobalValues.CurrentLogText = "Theme colors restored.";
+            }
+            catch { GlobalValues.CurrentLogText = "Restore theme colors failed!"; }
+            return list;
         }
     }
 }

@@ -96,9 +96,9 @@ namespace NutSort.Models
                 }
                 foreach (Solution solution in Solutions)
                 {
-                    new Thread(solution.Solve).Start();
+                    //new Thread(solution.Solve).Start();
                 }
-                //new Thread(Solutions[0].Solve).Start();
+                new Thread(Solutions[0].Solve).Start();
             }
         }
 

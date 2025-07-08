@@ -45,7 +45,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="White" Height="Auto">
+                    <Grid Background="{DynamicResource colorForeground}" Height="Auto">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
@@ -62,7 +62,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <Label Background="DarkGray" Width="10" Height="20"/>
+                                        <Label Background="{DynamicResource colorBackground_Transp80}" Width="10" Height="20"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
