@@ -17,15 +17,17 @@ namespace NutSort.Windows
             GlobalValues.CreateDirectories();
             NutColor.LoadJson();
             //Board.LoadJson();
-            Board board = new() { StackCount = 11, StackHeight = 4, NutSameColorCount = 4, ColorCount = 9, MaxColumnsCount = 5 };
-            board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|blass|grün|grün|hellblau|rosa|grau|gelb|hellblau|blass|lila|grau|rosa|lila|blass|orange|grau|schwarz|rosa|grün|grau|blass|schwarz|gelb|lila|grün|orange|lila|rosa|gelb|hellblau|gelb|hellblau|||||||||");
             //Board board = new() { StackCount = 4, StackHeight = 4, NutSameColorCount = 2, ColorCount = 4, MaxColumnsCount = 5 };
             //board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|grün|grün|hellblau|hellblau|");
+            //Board board = new() { StackCount = 11, StackHeight = 4, NutSameColorCount = 4, ColorCount = 9, MaxColumnsCount = 5 };
+            //board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|blass|grün|grün|hellblau|rosa|grau|gelb|hellblau|blass|lila|grau|rosa|lila|blass|orange|grau|schwarz|rosa|grün|grau|blass|schwarz|gelb|lila|grün|orange|lila|rosa|gelb|hellblau|gelb|hellblau|||||||||");
+            Board board = new() { StackCount = 14, StackHeight = 4, NutSameColorCount = 4, ColorCount = 12, MaxColumnsCount = 5 };
+            board.CreateInitialBoardstate("grau|rot|grün|lila|blau|lila|orange|gelb|blau|gelb|gelb|blass|schwarz|pink|pink|schwarz|rot|rosa|grau|rot|orange|grün|orange|rot|blau|blass|rosa|schwarz|grau|blass|hellblau|hellblau|pink|orange|schwarz|lila|pink|gelb|blass|hellblau|rosa|grün|grau|grün|hellblau|blau|rosa|lila|||||||||");
             Board.List.Add(board);
             Board.SaveJson();
             UpdateThemeColors();
             InitializeComponent();
-            Width = GlobalWinValues.screenWidth * 0.3;
+            Width = GlobalWinValues.screenWidth * 0.35;
             Height = GlobalWinValues.screenHeight * 0.27;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1;
@@ -38,6 +40,10 @@ namespace NutSort.Windows
             foreach (Board board in Board.List)
             {
                 board.StopSolving();
+            }
+            if (ViewModels.MainVM.Instance?.BoardstateVM is not null)
+            {
+                ViewModels.MainVM.Instance.BoardstateVM.AnimationIsRunning = false;
             }
         }
 

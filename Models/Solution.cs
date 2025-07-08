@@ -50,6 +50,7 @@ namespace NutSort.Models
                 }
                 IterationCount = iterationCount;
                 TotalProcessDurationSec = totalProcessDurationSec;
+                SolveStartTime = boardstates[0].Solution.SolveStartTime;
             }
         }
 

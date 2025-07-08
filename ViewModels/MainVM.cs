@@ -4,7 +4,7 @@ namespace NutSort.ViewModels
 {
     public class MainVM : GTRC_WPF.ViewModels.MainVM
     {
-        public static MainVM? Instance;
+        public static MainVM? Instance { get; set; }
 
         private BoardstateVM? boardstateVM;
 
