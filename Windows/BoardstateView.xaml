@@ -20,6 +20,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Content="Solution Nr" Style="{StaticResource LabelStyle}" Margin="5"/>
             <Label Grid.Row="0" Grid.Column="1" Content="{Binding SolutionCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
@@ -36,6 +37,8 @@
             <Label Grid.Row="3" Grid.Column="0" Content="Duration:" Style="{StaticResource LabelStyle}" Margin="5"/>
             <Label Grid.Row="3" Grid.Column="1" Content="{Binding TotalProcessDurationSec}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
             <Label Grid.Row="3" Grid.Column="2" Content="sec" Style="{StaticResource LabelStyle}" Margin="0"/>
+            <Label Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Content="{Binding State}" Style="{StaticResource LabelStyle}" Margin="0"/>
+            <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="{Binding GlobalState}" Style="{StaticResource LabelStyle}" Margin="5"/>
         </Grid>
         <ItemsControl ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
             <ItemsControl.ItemsPanel>

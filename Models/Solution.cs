@@ -45,6 +45,7 @@ namespace NutSort.Models
                     Boardstate newBoardstate = new(stacks, this);
                     Boardstates.Add(newBoardstate);
                     newBoardstate.Solution = this;
+                    Boardstates[0].NextMoveIndex = boardstate.NextMoveIndex;
                 }
                 IterationCount = iterationCount;
                 TotalProcessDurationSec = totalProcessDurationSec;
@@ -66,6 +67,7 @@ namespace NutSort.Models
             }
             Boardstates.Add(new(stacks, this));
             Boardstates[0].Solution = this;
+            Boardstates[0].NextMoveIndex = initialBoardstate.NextMoveIndex;
             //new Thread(Boardstates[0].TryMakeNextMove).Start();
         }
 
@@ -93,6 +95,7 @@ namespace NutSort.Models
                 Boardstate state = Boardstates[^1];
                 if (IsFinished)
                 {
+                    DeleteLatestBoardstate();
                     if (Board.ShortestSolution is null || Boardstates.Count < Board.ShortestSolution.Boardstates.Count)
                     {
                         Board.ShortestSolution = this;
@@ -171,7 +174,7 @@ namespace NutSort.Models
                 if (Boardstates.Count == 1)
                 {
                     Boardstate? state = Board.InitialBoardstate?.Boardstates[0];
-                    //movedNut = state?.Stacks[state.PossibleMoves[Board.Solutions.IndexOf(this)].FromStackNr].TopNut;
+                    movedNut = state?.Stacks[state.PossibleMoves[Board.Solutions.IndexOf(this)].FromStackNr].TopNut;
                 }
                 else if (Boardstates[^2].NextMoveIndex > 0)
                 {

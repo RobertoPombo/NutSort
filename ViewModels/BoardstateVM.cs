@@ -98,12 +98,45 @@ namespace NutSort.ViewModels
             get { return solution?.TotalProcessDurationSec ?? -1; }
         }
 
+        public string State
+        {
+            get
+            {
+                if (solutionNr < 0)
+                {
+                    if (board.IsFinished) { return "(finished)"; }
+                    else if (board.ShortestSolution is not null) { return "(solution found)"; }
+                    else { return "(ongoing)"; }
+                }
+                else if (solution is null) { return string.Empty; }
+                else if (solution.IsFinished) { return "(finished)"; }
+                else { return "(ongoing)"; }
+            }
+        }
+
+        public string GlobalState
+        {
+            get
+            {
+                int runningCount = 0;
+                int finishedCount = 0;
+                foreach (Solution _solution in Board.Solutions)
+                {
+                    if (_solution.IsFinished) { finishedCount++; }
+                    else { runningCount++; }
+        }
+                return "Running: " + runningCount.ToString() + " - Finished: " + finishedCount.ToString();
+            }
+        }
+
         private void LoadBoardstate()
         {
             RaisePropertyChanged(nameof(SolutionCount));
             RaisePropertyChanged(nameof(StepCount));
             RaisePropertyChanged(nameof(IterationCount));
             RaisePropertyChanged(nameof(TotalProcessDurationSec));
+            RaisePropertyChanged(nameof(State));
+            RaisePropertyChanged(nameof(GlobalState));
             Stacks = [];
             if (boardstate is not null)
             {

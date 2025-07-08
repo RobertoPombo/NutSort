@@ -84,21 +84,32 @@ namespace NutSort.Models
             }
         }
 
+        [JsonIgnore] public bool IsFinished
+        {
+            get
+            {
+                foreach (Solution solution in Solutions)
+                {
+                    if (!solution.IsFinished) { return false; }
+                }
+                return true;
+            }
+        }
+
         public void Solve()
         {
             if (InitialBoardstate?.Boardstates.Count > 0)
             {
-                foreach (Move move in InitialBoardstate.Boardstates[0].PossibleMoves)
+                for (int moveNr = 0; moveNr < InitialBoardstate.Boardstates[0].PossibleMoves.Count; moveNr++)
                 {
-                    move.Execute(InitialBoardstate.Boardstates[0]);
                     Solutions.Add(new (InitialBoardstate.Boardstates[0], this));
-                    move.Undo(InitialBoardstate.Boardstates[0]);
+                    InitialBoardstate.Boardstates[0].NextMoveIndex++;
                 }
                 foreach (Solution solution in Solutions)
                 {
-                    //new Thread(solution.Solve).Start();
+                    new Thread(solution.Solve).Start();
                 }
-                new Thread(Solutions[0].Solve).Start();
+                //new Thread(Solutions[0].Solve).Start();
             }
         }
 

@@ -26,7 +26,7 @@ namespace NutSort.Windows
             UpdateThemeColors();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.3;
-            Height = GlobalWinValues.screenHeight * 0.25;
+            Height = GlobalWinValues.screenHeight * 0.27;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1;
             Closing += CloseWindow;
