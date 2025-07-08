@@ -10,7 +10,7 @@ namespace NutSort.ViewModels
     {
         public BoardstateVM()
         {
-            Stacks = [];
+            BoardstateRows = [];
             if (Board.List.Count > 0) { Board = Board.List[0]; }
             SolutionNr = -1;
             PreviousSolutionCmd = new UICmd((o) => PreviousSolution());
@@ -25,11 +25,11 @@ namespace NutSort.ViewModels
             StopCmd = new UICmd((o) => StopAnimation());
             ReverseCmd = new UICmd((o) => ReverseAnimation());
             ResetCmd = new UICmd((o) => ResetAnimation());
-            RaisePropertyChanged(nameof(Stacks));
+            RaisePropertyChanged(nameof(BoardstateRows));
         }
 
         private Board board = new();
-        private ObservableCollection<Stack> stacks = [];
+        private ObservableCollection<BoardstateRow> boardstateRows = [];
         private Solution? solution = null;
         private Boardstate? boardstate = null;
         private int solutionNr = 0;
@@ -44,10 +44,10 @@ namespace NutSort.ViewModels
             set { board = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(SolutionCount)); }
         }
 
-        public ObservableCollection<Stack> Stacks
+        public ObservableCollection<BoardstateRow> BoardstateRows
         {
-            get { return stacks; }
-            set { stacks = value; RaisePropertyChanged(); }
+            get { return boardstateRows; }
+            set { boardstateRows = value; RaisePropertyChanged(); }
         }
 
         public int SolutionCount
@@ -166,15 +166,22 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(State));
             RaisePropertyChanged(nameof(RunningCount));
             RaisePropertyChanged(nameof(FinishedCount));
-            Stacks = [];
+            boardstateRows = [];
             if (boardstate is not null)
             {
-                foreach (Stack stack in boardstate.Stacks)
+                List<Stack> stacks = [];
+                for (int stackNr = 0; stackNr < boardstate.Stacks.Count; stackNr++)
                 {
-                    Stacks.Add(stack);
+                    stacks.Add(boardstate.Stacks[stackNr]);
+                    if (stacks.Count >= board.MaxColumnsCount)
+                    {
+                        boardstateRows.Add(new() { Stacks = stacks });
+                        stacks = [];
+                    }
                 }
+                if (stacks.Count > 0) { boardstateRows.Add(new() { Stacks = stacks }); }
             }
-            RaisePropertyChanged(nameof(Stacks));
+            RaisePropertyChanged(nameof(BoardstateRows));
         }
 
         private void PreviousSolution()

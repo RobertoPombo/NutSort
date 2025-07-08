@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:NutSort.Windows"
              mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -49,50 +49,66 @@
             <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding AnimationDelayMs}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
             <Label Grid.Row="4" Grid.Column="6" Content="ms" Style="{StaticResource LabelStyle}" Margin="0"/>
         </Grid>
-        <ItemsControl ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
+        <ItemsControl ItemsSource="{Binding BoardstateRows}" Margin="5" Background="Transparent" HorizontalAlignment="Center" Width="Auto">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5" Background="Transparent" VerticalAlignment="Stretch"/>
+                    <StackPanel Orientation="Vertical" Margin="5" Background="Transparent"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="Transparent" Height="Auto">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <ItemsControl Grid.Column="0" ItemsSource="{Binding EmptyNutSlots}" Margin="5">
+                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" Margin="0">
-                                        <StackPanel.LayoutTransform>
-                                            <RotateTransform Angle="180"/>
-                                        </StackPanel.LayoutTransform>
-                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="5" Background="Transparent"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Nuts}" Margin="5">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" Margin="0">
-                                        <StackPanel.LayoutTransform>
-                                            <RotateTransform Angle="180"/>
-                                        </StackPanel.LayoutTransform>
-                                    </StackPanel>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
+                                    <Grid Background="Transparent" Height="Auto">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ItemsControl Grid.Column="0" ItemsSource="{Binding EmptyNutSlots}" Margin="5">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical" Margin="0">
+                                                        <StackPanel.LayoutTransform>
+                                                            <RotateTransform Angle="180"/>
+                                                        </StackPanel.LayoutTransform>
+                                                    </StackPanel>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Nuts}" Margin="5">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical" Margin="0">
+                                                        <StackPanel.LayoutTransform>
+                                                            <RotateTransform Angle="180"/>
+                                                        </StackPanel.LayoutTransform>
+                                                    </StackPanel>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
