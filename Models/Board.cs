@@ -100,6 +100,8 @@ namespace NutSort.Models
         {
             if (InitialBoardstate?.Boardstates.Count > 0)
             {
+                InitialBoardstate.SolveStartTime = DateTime.Now;
+                InitialBoardstate.Boardstates[0].UpdatePossibleMoves();
                 for (int moveNr = 0; moveNr < InitialBoardstate.Boardstates[0].PossibleMoves.Count; moveNr++)
                 {
                     Solutions.Add(new (InitialBoardstate.Boardstates[0], this));

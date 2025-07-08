@@ -45,7 +45,8 @@ namespace NutSort.Models
                     Boardstate newBoardstate = new(stacks, this);
                     Boardstates.Add(newBoardstate);
                     newBoardstate.Solution = this;
-                    Boardstates[0].NextMoveIndex = boardstate.NextMoveIndex;
+                    foreach (Move move in boardstate.PossibleMoves) { newBoardstate.PossibleMoves.Add(move); }
+                    newBoardstate.NextMoveIndex = boardstate.NextMoveIndex;
                 }
                 IterationCount = iterationCount;
                 TotalProcessDurationSec = totalProcessDurationSec;
@@ -65,15 +66,17 @@ namespace NutSort.Models
                 }
                 stacks.Add(new() { Nuts = nuts });
             }
-            Boardstates.Add(new(stacks, this));
-            Boardstates[0].Solution = this;
-            Boardstates[0].NextMoveIndex = initialBoardstate.NextMoveIndex;
-            //new Thread(Boardstates[0].TryMakeNextMove).Start();
+            Boardstate newBoardstate = new(stacks, this);
+            Boardstates.Add(newBoardstate);
+            newBoardstate.Solution = this;
+            foreach (Move move in initialBoardstate.PossibleMoves) { newBoardstate.PossibleMoves.Add(move); }
+            newBoardstate.NextMoveIndex = initialBoardstate.NextMoveIndex;
         }
 
         public List<Boardstate> Boardstates { get; set; } = [];
         public Board Board { get; set; } = new();
         public long IterationCount { get; set; } = 0;
+        public DateTime SolveStartTime { get; set; } = DateTime.Now;
         public int TotalProcessDurationSec { get; set; } = 0;
 
         [JsonIgnore] public bool IsFinished
@@ -89,13 +92,11 @@ namespace NutSort.Models
 
         public void Solve()
         {
-            DateTime startTime = DateTime.Now;
             while (Boardstates.Count > 0 && isAllowedToSolve)
             {
                 Boardstate state = Boardstates[^1];
                 if (IsFinished)
                 {
-                    DeleteLatestBoardstate();
                     if (Board.ShortestSolution is null || Boardstates.Count < Board.ShortestSolution.Boardstates.Count)
                     {
                         Board.ShortestSolution = this;
@@ -111,7 +112,7 @@ namespace NutSort.Models
                     TryExcecuteNextMove(state);
                 }
                 IterationCount++;
-                TotalProcessDurationSec = (int)(DateTime.Now - startTime).TotalSeconds;
+                TotalProcessDurationSec = (int)(DateTime.Now - SolveStartTime).TotalSeconds;
             }
         }
 
@@ -122,14 +123,14 @@ namespace NutSort.Models
 
         public void TryExcecuteNextMove(Boardstate state)
         {
-            if (state.NextMoveIndex >= state.PossibleMoves.Count || (Board.ShortestSolution is not null && Boardstates.Count > Board.ShortestSolution.Boardstates.Count))
+            if (state.NextMoveIndex >= state.PossibleMoves.Count || (Board.ShortestSolution is not null && Boardstates.Count >= Board.ShortestSolution.Boardstates.Count))
             {
+                DeleteLatestBoardstate();
                 if (Boardstates.Count < 2)
                 {
                     Board.Solutions.Remove(this);
                     isAllowedToSolve = false;
                 }
-                DeleteLatestBoardstate();
             }
             else
             {
@@ -137,56 +138,32 @@ namespace NutSort.Models
             }
         }
 
-        private void ExecuteNextMove(Boardstate state)
+        private void ExecuteNextMove(Boardstate state0)
         {
-            UndoPreviousMove(state);
-            state.PossibleMoves[state.NextMoveIndex].Execute(state);
-            state.NextMoveIndex++;
-            bool circleFound = false;
+            Boardstate state1 = new(state0.Stacks, this);
+            Boardstates.Add(state1);
+            state0.PossibleMoves[state0.NextMoveIndex].Execute(state1);
+            state1.UpdatePossibleMoves();
+            state0.NextMoveIndex++;
             for (int boardstateNr1 = 0; boardstateNr1 < Boardstates.Count - 1; boardstateNr1++)
             {
-                if (Boardstates[boardstateNr1].Id == state.Id)
+                if (Boardstates[boardstateNr1].Id == state1.Id)
                 {
                     for (int boardstateNr2 = boardstateNr1 + 1; boardstateNr2 < Boardstates.Count; boardstateNr2++)
                     {
                         DeleteLatestBoardstate();
                     }
-                    circleFound = true;
                     break;
                 }
-            }
-            if (!circleFound) { Boardstates.Add(new(state.Stacks, this)); }
-        }
-
-        private void UndoPreviousMove(Boardstate state)
-        {
-            if (state.NextMoveIndex > 0)
-            {
-                state.PossibleMoves[state.NextMoveIndex - 1].Undo(state);
             }
         }
 
         private void DeleteLatestBoardstate()
         {
-            if (Boardstates.Count > 0)
-            {
-                Nut? movedNut = null;
-                if (Boardstates.Count == 1)
-                {
-                    Boardstate? state = Board.InitialBoardstate?.Boardstates[0];
-                    movedNut = state?.Stacks[state.PossibleMoves[Board.Solutions.IndexOf(this)].FromStackNr].TopNut;
-                }
-                else if (Boardstates[^2].NextMoveIndex > 0)
-                {
-                    Boardstate state = Boardstates[^2];
-                    movedNut = state.Stacks[state.PossibleMoves[state.NextMoveIndex - 1].FromStackNr].TopNut;
-                }
-                if (movedNut is not null && movedNut.Positions.Count > 0)
-                {
-                    movedNut.Positions.RemoveAt(movedNut.Positions.Count - 1);
-                }
-                Boardstates.RemoveAt(Boardstates.Count - 1);
-            }
+            Boardstate state = Boardstates[^2];
+            Nut? movedNut = state.Stacks[state.PossibleMoves[state.NextMoveIndex - 1].FromStackNr].TopNut;
+            movedNut?.Positions.RemoveAt(movedNut.Positions.Count - 1);
+            Boardstates.RemoveAt(Boardstates.Count - 1);
         }
     }
 }

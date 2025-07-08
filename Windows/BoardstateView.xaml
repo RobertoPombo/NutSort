@@ -20,25 +20,23 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Solution Nr" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="Solution Nr" Style="{StaticResource LabelStyle}" Margin="5,0"/>
             <Label Grid.Row="0" Grid.Column="1" Content="{Binding SolutionCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
             <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding SolutionNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
             <Button Grid.Row="0" Grid.Column="3" Command="{Binding PreviousSolutionCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
             <Button Grid.Row="0" Grid.Column="4" Command="{Binding NextSolutionCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Step Nr" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Step Nr" Style="{StaticResource LabelStyle}" Margin="5,0"/>
             <Label Grid.Row="1" Grid.Column="1" Content="{Binding StepCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
             <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding StepNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
             <Button Grid.Row="1" Grid.Column="3" Command="{Binding PreviousStepCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
             <Button Grid.Row="1" Grid.Column="4" Command="{Binding NextStepCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="Iterations:" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Iterations:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
             <Label Grid.Row="2" Grid.Column="1" Content="{Binding IterationCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
-            <Label Grid.Row="3" Grid.Column="0" Content="Duration:" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Duration:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
             <Label Grid.Row="3" Grid.Column="1" Content="{Binding TotalProcessDurationSec}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
             <Label Grid.Row="3" Grid.Column="2" Content="sec" Style="{StaticResource LabelStyle}" Margin="0"/>
             <Label Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Content="{Binding State}" Style="{StaticResource LabelStyle}" Margin="0"/>
-            <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="{Binding GlobalState}" Style="{StaticResource LabelStyle}" Margin="5"/>
         </Grid>
         <ItemsControl ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
             <ItemsControl.ItemsPanel>
@@ -92,5 +90,17 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Running:" Style="{StaticResource LabelStyle}" Margin="5,5,0,5"/>
+            <Label Grid.Column="1" Content="{Binding RunningCount}" Style="{StaticResource LabelStyle}" Margin="0,0,5,0"/>
+            <Label Grid.Column="2" Content="Finished:" Style="{StaticResource LabelStyle}" Margin="5,5,0,5"/>
+            <Label Grid.Column="3" Content="{Binding FinishedCount}" Style="{StaticResource LabelStyle}" Margin="0,0,5,0"/>
+        </Grid>
     </StackPanel>
 </UserControl>

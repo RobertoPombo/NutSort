@@ -26,8 +26,6 @@ namespace NutSort.ViewModels
         private Boardstate? boardstate = null;
         private int solutionNr = 0;
         private int stepNr = 0;
-        private long iterationCount = 0;
-        private int totalProcessDurationSec = 0;
 
         public Board Board
         {
@@ -114,18 +112,23 @@ namespace NutSort.ViewModels
             }
         }
 
-        public string GlobalState
+        public int RunningCount
         {
             get
             {
-                int runningCount = 0;
-                int finishedCount = 0;
-                foreach (Solution _solution in Board.Solutions)
-                {
-                    if (_solution.IsFinished) { finishedCount++; }
-                    else { runningCount++; }
+                int count = 0;
+                foreach (Solution _solution in Board.Solutions) { if (!_solution.IsFinished) { count++; } }
+                return count;
+            }
         }
-                return "Running: " + runningCount.ToString() + " - Finished: " + finishedCount.ToString();
+
+        public int FinishedCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (Solution _solution in Board.Solutions) { if (_solution.IsFinished) { count++; } }
+                return count;
             }
         }
 
@@ -136,7 +139,8 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(IterationCount));
             RaisePropertyChanged(nameof(TotalProcessDurationSec));
             RaisePropertyChanged(nameof(State));
-            RaisePropertyChanged(nameof(GlobalState));
+            RaisePropertyChanged(nameof(RunningCount));
+            RaisePropertyChanged(nameof(FinishedCount));
             Stacks = [];
             if (boardstate is not null)
             {

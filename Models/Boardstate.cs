@@ -20,7 +20,6 @@ namespace NutSort.Models
                     stack.Nuts[nutNr].Positions.Add(new() { StackNr = stackNr, Level = nutNr });
                 }
             }
-            UpdatePossibleMoves();
         }
 
         public Solution Solution { get; set; } = new();
@@ -57,8 +56,9 @@ namespace NutSort.Models
             }
         }
 
-        private void UpdatePossibleMoves()
+        public void UpdatePossibleMoves()
         {
+            PossibleMoves = [];
             for (byte fromStackNr = 0; fromStackNr < Stacks.Count; fromStackNr++)
             {
                 Stack fromStack = Stacks[fromStackNr];

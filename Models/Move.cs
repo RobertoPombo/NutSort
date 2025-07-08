@@ -11,23 +11,13 @@ namespace NutSort.Models
 
         public void Execute(Boardstate boardstate)
         {
-            MoveNut(boardstate, FromStackNr, ToStackNr);
-        }
-
-        public void Undo(Boardstate boardstate)
-        {
-            MoveNut(boardstate, ToStackNr, FromStackNr);
-        }
-
-        private static void MoveNut(Boardstate boardstate, byte fromStackNr, byte toStackNr)
-        {
-            Stack fromStack = boardstate.Stacks[fromStackNr];
-            Stack toStack = boardstate.Stacks[toStackNr];
+            Stack fromStack = boardstate.Stacks[FromStackNr];
+            Stack toStack = boardstate.Stacks[ToStackNr];
             if (fromStack.TopNut is not null)
             {
                 if (fromStack.TopNut.Positions.Count > 0)
                 {
-                    fromStack.TopNut.Positions[^1].StackNr = toStackNr;
+                    fromStack.TopNut.Positions[^1].StackNr = ToStackNr;
                     fromStack.TopNut.Positions[^1].Level = (byte)toStack.Nuts.Count;
                 }
                 toStack.Nuts.Add(fromStack.TopNut);
