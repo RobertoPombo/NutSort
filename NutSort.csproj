@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\GTRC Projekte\GTRC-WPF\GTRC_WPF.csproj" />
   </ItemGroup>
 

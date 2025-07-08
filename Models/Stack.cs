@@ -10,6 +10,8 @@ namespace NutSort.Models
         public Boardstate Boardstate { get; set; } = new();
         public List<Nut> Nuts { get; set; } = [];
 
+        [JsonIgnore] public List<byte> EmptyNutSlots { get { List<byte> list = []; for (byte nutNr = 0; nutNr < Boardstate.Solution.Board.StackHeight + 1; nutNr++) { list.Add(byte.MinValue); } return list; } }
+
         [JsonIgnore] public Nut? TopNut
         {
             get
@@ -56,7 +58,7 @@ namespace NutSort.Models
                 NutColor firstNutColor = Nuts[0].NutColor;
                 foreach (Nut nut in Nuts)
                 {
-                    if (nut.NutColor != firstNutColor) { return false; }
+                    if (nut.NutColor.Name != firstNutColor.Name) { return false; }
                 }
                 return true;
             }
@@ -68,7 +70,7 @@ namespace NutSort.Models
             {
                 if (IsEmpty) { return true; }
                 if (!IsMonochromatic) { return false; }
-                if (Nuts.Count != Boardstate.Solution.Board.ColorCount) { return false; }
+                if (Nuts.Count != Boardstate.Solution.Board.NutSameColorCount) { return false; }
                 return true;
             }
         }

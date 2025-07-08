@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Windows.Media;
 using Newtonsoft.Json;
 
 namespace NutSort.Models
@@ -17,7 +18,7 @@ namespace NutSort.Models
         public byte Green { get; set; } = byte.MinValue;
         public byte Blue { get; set; } = byte.MinValue;
 
-        [JsonIgnore] public System.Drawing.Color Preview { get { return System.Drawing.Color.FromArgb(Red, Green, Blue); } }
+        [JsonIgnore] public Brush Preview { get { return new SolidColorBrush(System.Windows.Media.Color.FromRgb(Red, Green, Blue)); } }
 
         public static NutColor? GetByName(string name)
         {

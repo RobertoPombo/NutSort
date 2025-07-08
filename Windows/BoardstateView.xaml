@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="NutSort.Windows.BoardstateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NutSort.Windows"
+             mc:Ignorable="d">
+
+    <StackPanel Orientation="Vertical">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Solution Nr" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding SolutionCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
+            <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding SolutionNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <Button Grid.Row="0" Grid.Column="3" Command="{Binding PreviousSolutionCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Button Grid.Row="0" Grid.Column="4" Command="{Binding NextSolutionCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Step Nr" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding StepCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
+            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding StepNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <Button Grid.Row="1" Grid.Column="3" Command="{Binding PreviousStepCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Button Grid.Row="1" Grid.Column="4" Command="{Binding NextStepCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Iterations:" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="2" Grid.Column="1" Content="{Binding IterationCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Duration:" Style="{StaticResource LabelStyle}" Margin="5"/>
+            <Label Grid.Row="3" Grid.Column="1" Content="{Binding TotalProcessDurationSec}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
+            <Label Grid.Row="3" Grid.Column="2" Content="sec" Style="{StaticResource LabelStyle}" Margin="0"/>
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5" Background="Transparent" VerticalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="White" Height="Auto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                        </Grid.ColumnDefinitions>
+                        <ItemsControl Grid.Column="0" ItemsSource="{Binding EmptyNutSlots}" Margin="5">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" Margin="0">
+                                        <StackPanel.LayoutTransform>
+                                            <RotateTransform Angle="180"/>
+                                        </StackPanel.LayoutTransform>
+                                    </StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Label Background="DarkGray" Width="10" Height="20"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Nuts}" Margin="5">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" Margin="0">
+                                        <StackPanel.LayoutTransform>
+                                            <RotateTransform Angle="180"/>
+                                        </StackPanel.LayoutTransform>
+                                    </StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,1"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

@@ -67,7 +67,7 @@ namespace NutSort.Models
             {
                 if (value < 1) { value = 1; }
                 if (value > NutColor.List.Count) { value = (byte)NutColor.List.Count; }
-                if (value > stackCount - 1) { value = (byte)(stackCount - 1); }
+                if (value > stackCount) { value = (byte)(stackCount); }
                 if (value * nutSameColorCount > stackCount * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * stackHeight / nutSameColorCount, 0) - 1)); }
                 colorCount = value;
             }
@@ -91,13 +91,14 @@ namespace NutSort.Models
                 foreach (Move move in InitialBoardstate.Boardstates[0].PossibleMoves)
                 {
                     move.Execute(InitialBoardstate.Boardstates[0]);
-                    Solutions.Add(new Solution(InitialBoardstate.Boardstates[0]));
+                    Solutions.Add(new (InitialBoardstate.Boardstates[0], this));
                     move.Undo(InitialBoardstate.Boardstates[0]);
                 }
                 foreach (Solution solution in Solutions)
                 {
                     new Thread(solution.Solve).Start();
                 }
+                //new Thread(Solutions[0].Solve).Start();
             }
         }
 
@@ -111,7 +112,6 @@ namespace NutSort.Models
 
         public static void LoadJson()
         {
-            NutColor.LoadJson();
             if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(new List<Board>(), Formatting.Indented), Encoding.Unicode); }
             try
             {
@@ -131,29 +131,28 @@ namespace NutSort.Models
 
         public void CreateInitialBoardstate(string id)
         {
-            NutColor.LoadJson();
             string[] ids = id.Split('|');
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
             List<Nut> nuts = [];
-            byte colorNr = 0;
             for (byte nutNr = 0; nutNr < ids.Length; nutNr++)
             {
-                nuts.Add(new(NutColor.GetByName(ids[nutNr]) ?? NutColor.List[colorNr]));
-                InitialBoardstate.Nuts.Add(nuts[^1]);
-                colorNr++;
-                if (colorNr >= colorCount) { colorNr = 0; }
-                if (nuts.Count >= stackHeight)
+                NutColor? nutColor = NutColor.GetByName(ids[nutNr]);
+                if (nutColor is not null)
                 {
-                    stacks.Add(new() { Nuts = nuts });
-                    nuts = [];
+                    nuts.Add(new(nutColor));
+                    if (nuts.Count >= stackHeight)
+                    {
+                        stacks.Add(new() { Nuts = nuts });
+                        nuts = [];
+                    }
                 }
             }
             for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++)
             {
                 stacks.Add(new());
             }
-            InitialBoardstate.Boardstates.Add(new(stacks));
+            InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
         }
     }
 }

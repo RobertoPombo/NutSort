@@ -23,6 +23,9 @@
                 <ResourceDictionary Source="pack://application:,,,/GTRC_WPF;component/Styles/DataGridStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="Font_GTRC">pack://application:,,,/GTRC_WPF;component/Fonts/#Metropolis</FontFamily>
+            <DataTemplate DataType="{x:Type viewModel:BoardstateVM}">
+                <view:BoardstateView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

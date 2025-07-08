@@ -11,7 +11,19 @@
         Icon="/icon.ico"
         FontFamily="{StaticResource Font_GTRC}" FontStyle="Normal" FontWeight="Regular"
         FontSize="13">
-    <Grid>
 
+    <Window.Resources>
+        <viewModel:MainVM x:Key="MainVM"/>
+    </Window.Resources>
+
+    <Grid DataContext="{StaticResource MainVM}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <UserControl Grid.Row="1" Content="{Binding BoardstateVM}"/>
+        <Label Grid.Row="2" Content="{Binding CurrentLogText}"
+               Style="{StaticResource LabelStyle}" Margin="15,5" Padding="0" Height="Auto"/>
     </Grid>
 </Window>

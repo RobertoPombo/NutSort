@@ -6,8 +6,9 @@ namespace NutSort.Models
     public class Boardstate
     {
         public Boardstate() { }
-        public Boardstate(List<Stack> stacks)
+        public Boardstate(List<Stack> stacks, Solution solution)
         {
+            Solution = solution;
             for (byte stackNr = 0; stackNr < stacks.Count; stackNr++)
             {
                 List<Nut> nuts = [];
@@ -34,9 +35,10 @@ namespace NutSort.Models
                 string id = string.Empty;
                 foreach (Stack stack in Stacks)
                 {
-                    foreach (Nut nut in stack.Nuts)
+                    for (int nutNr = 0; nutNr < Solution.Board.StackHeight; nutNr++)
                     {
-                        id += nut.NutColor.Name + "|";
+                        if (nutNr < stack.Nuts.Count) { id += stack.Nuts[nutNr].NutColor.Name + "|"; }
+                        else { id += "|"; }
                     }
                 }
                 return id;
