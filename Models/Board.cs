@@ -42,29 +42,33 @@ namespace NutSort.Models
             }
         }
 
-        private byte stackCount = 14;
+        private byte stackCount = 1;
         public byte StackCount
         {
             get { return stackCount; }
             set
             {
                 if (value < 2) { value = 2; }
+                if (value < colorCount) { value = colorCount; }
+                if (colorCount * nutSameColorCount > value * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / stackHeight) + 1)); }
                 stackCount = value;
             }
         }
 
-        private byte stackHeight = 4;
+        private byte stackHeight = 1;
         public byte StackHeight
         {
             get { return stackHeight; }
             set
             {
                 if (value < 2) { value = 2; }
+                if (value < nutSameColorCount) { value = nutSameColorCount; }
+                if (colorCount * nutSameColorCount > value * stackCount - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / stackCount) + 1)); }
                 stackHeight = value;
             }
         }
 
-        private byte nutSameColorCount = 4;
+        private byte nutSameColorCount = 1;
         public byte NutSameColorCount
         {
             get { return nutSameColorCount; }
@@ -72,11 +76,12 @@ namespace NutSort.Models
             {
                 if (value < 1) { value = 1; }
                 if (value > stackHeight) { value = stackHeight; }
+                if (value * colorCount > stackCount * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * stackHeight / colorCount, 0) - 1)); }
                 nutSameColorCount = value;
             }
         }
 
-        private byte colorCount = 12;
+        private byte colorCount = 1;
         public byte ColorCount
         {
             get { return colorCount; }
@@ -84,13 +89,13 @@ namespace NutSort.Models
             {
                 if (value < 1) { value = 1; }
                 if (value > NutColor.List.Count) { value = (byte)NutColor.List.Count; }
-                if (value > stackCount) { value = (byte)(stackCount); }
+                if (value > stackCount) { value = stackCount; }
                 if (value * nutSameColorCount > stackCount * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * stackHeight / nutSameColorCount, 0) - 1)); }
                 colorCount = value;
             }
         }
 
-        private byte maxColumnsCount = 5;
+        private byte maxColumnsCount = 1;
         public byte MaxColumnsCount
         {
             get { return maxColumnsCount; }
@@ -172,17 +177,17 @@ namespace NutSort.Models
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
             List<Nut> nuts = [];
+            int slotsCount = 0;
             for (byte nutNr = 0; nutNr < ids.Length; nutNr++)
             {
+                slotsCount++;
                 NutColor? nutColor = NutColor.GetByName(ids[nutNr]);
-                if (nutColor is not null)
+                if (nutColor is not null) { nuts.Add(new(nutColor)); }
+                if (slotsCount >= stackHeight)
                 {
-                    nuts.Add(new(nutColor));
-                    if (nuts.Count >= stackHeight)
-                    {
-                        stacks.Add(new() { Nuts = nuts });
-                        nuts = [];
-                    }
+                    stacks.Add(new() { Nuts = nuts });
+                    nuts = [];
+                    slotsCount = 0;
                 }
             }
             for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++)
@@ -206,6 +211,7 @@ namespace NutSort.Models
                     }
                 }
             }
+
             InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
         }
     }

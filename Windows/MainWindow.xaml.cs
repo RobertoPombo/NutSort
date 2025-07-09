@@ -16,14 +16,7 @@ namespace NutSort.Windows
         {
             GlobalValues.CreateDirectories();
             NutColor.LoadJson();
-            //Board.LoadJson();
-            Board board = new(4, 4, 2, 4, 5, "Test");
-            board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|grün|grün|hellblau|hellblau|#|#|#|#|#|#|#|#");
-            board = new(11, 4, 4, 9, 4, "3");
-            board.CreateInitialBoardstate("schwarz|schwarz|orange|orange|blass|grün|grün|hellblau|rosa|grau|gelb|hellblau|blass|lila|grau|rosa|lila|blass|orange|grau|schwarz|rosa|grün|grau|blass|schwarz|gelb|lila|grün|orange|lila|rosa|gelb|hellblau|gelb|hellblau|#|#|#|#|#|#|#|#");
-            board = new(14,4,4,12,5, "27");
-            board.CreateInitialBoardstate("grau|rot|grün|lila|blau|lila|orange|gelb|blau|gelb|gelb|blass|schwarz|pink|pink|schwarz|rot|rosa|grau|rot|orange|grün|orange|rot|blau|blass|rosa|schwarz|grau|blass|hellblau|hellblau|pink|orange|schwarz|lila|pink|gelb|blass|hellblau|rosa|grün|grau|grün|hellblau|blau|rosa|lila|#|#|#|#|#|#|#|#");
-            Board.SaveJson();
+            Board.LoadJson();
             UpdateThemeColors();
             InitializeComponent();
             Width = GlobalWinValues.screenWidth * 0.21;

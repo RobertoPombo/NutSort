@@ -26,10 +26,10 @@
             <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle}" Margin="5"/>
             <Button Grid.Row="0" Grid.Column="1" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle}" Margin="5"/>
             <Button Grid.Row="0" Grid.Column="2" Command="{Binding EditBoardCmd}" Content="Edit" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="3" Command="{Binding RandomizeBoardCmd}" Content="Randomize" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="4" Command="{Binding CreateNewBoardCmd}" Content="New" Style="{StaticResource ButtonStyle}" Margin="5"/>
+            <Button Grid.Row="0" Grid.Column="3" Command="{Binding CreateNewBoardCmd}" Content="New" Style="{StaticResource ButtonStyle}" Margin="5"/>
+            <Button Grid.Row="0" Grid.Column="4" Command="{Binding DeleteBoardCmd}" Content="Delete" Style="{StaticResource ButtonStyle}" Margin="5"/>
             <Button Grid.Row="0" Grid.Column="5" Command="{Binding SaveBoardCmd}" Content="Save" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <ComboBox Grid.Row="0" Grid.Column="6" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+            <ComboBox Grid.Row="0" Grid.Column="6" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       SelectedValue="{Binding Board, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       DisplayMemberPath="LevelName"
                       Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
