@@ -21,5 +21,10 @@ namespace NutSort.Models
         }
 
         public NutColor NutColor { get; set; } = new();
+
+        public override string ToString()
+        {
+            return NutColor.ToString() + " #" + Id.ToString();
+        }
     }
 }

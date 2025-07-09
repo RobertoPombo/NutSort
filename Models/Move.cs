@@ -23,5 +23,10 @@ namespace NutSort.Models
                 }
             }
         }
+
+        public override string ToString()
+        {
+            return "from #" + FromStackNr.ToString() + " to #" + ToStackNr.ToString();
+        }
     }
 }

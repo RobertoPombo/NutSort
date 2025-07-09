@@ -72,5 +72,10 @@ namespace NutSort.Models
             File.WriteAllText(path, text, Encoding.Unicode);
             GlobalValues.CurrentLogText = "Nut colors saved.";
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

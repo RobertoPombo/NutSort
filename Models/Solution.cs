@@ -169,5 +169,13 @@ namespace NutSort.Models
             Nut? movedNut = state.Stacks[state.PossibleMoves[state.NextMoveIndex - 1].FromStackNr].TopNut;
             Boardstates.RemoveAt(Boardstates.Count - 1);
         }
+
+        public override string ToString()
+        {
+            string description = Board.ToString() + " - ";
+            if (Board.Solutions.Contains(this)) { description += "Solution-Nr " + Board.Solutions.IndexOf(this).ToString(); }
+            else { description += "initial boardstate"; }
+            return description;
+        }
     }
 }

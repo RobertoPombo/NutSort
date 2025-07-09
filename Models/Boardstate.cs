@@ -153,5 +153,10 @@ namespace NutSort.Models
             }
             return count;
         }
+
+        public override string ToString()
+        {
+            return Solution.ToString() +  " - Step-Nr " + Solution.Boardstates.IndexOf(this).ToString();
+        }
     }
 }

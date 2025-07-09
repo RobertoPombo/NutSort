@@ -10,7 +10,16 @@ namespace NutSort.Models
         public Boardstate Boardstate { get; set; } = new();
         public List<Nut> Nuts { get; set; } = [];
 
-        [JsonIgnore] public List<byte> EmptyNutSlots { get { List<byte> list = []; for (byte nutNr = 0; nutNr < Boardstate.Solution.Board.StackHeight + 1; nutNr++) { list.Add(byte.MinValue); } return list; } }
+        [JsonIgnore] public List<byte> EmptyNutSlots
+        {
+            get
+            {
+                List<byte> list = [];
+                int extraSlots = (int)Math.Floor((double)(Boardstate.Solution.Board.StackHeight + 3) / 10) + 1;
+                for (byte nutNr = 0; nutNr < Boardstate.Solution.Board.StackHeight + extraSlots; nutNr++) { list.Add(byte.MinValue); }
+                return list;
+            }
+        }
 
         [JsonIgnore] public Nut? TopNut
         {
@@ -73,6 +82,14 @@ namespace NutSort.Models
                 if (Nuts.Count != Boardstate.Solution.Board.NutSameColorCount) { return false; }
                 return true;
             }
+        }
+
+        public override string ToString()
+        {
+            string description = Boardstate.ToString() + " - ";
+            foreach (Nut nut in Nuts) { description += nut.ToString() + " | "; }
+            if (description.Length > 3) { return description[..^3]; }
+            return description;
         }
     }
 }

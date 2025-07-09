@@ -79,6 +79,7 @@ namespace NutSort.ViewModels
                 {
                     board.StackCount = value;
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                    board.ResetSolutions();
                     InitialBoardstate();
                     FirstStep();
                     LoadBoardstate();
@@ -95,6 +96,7 @@ namespace NutSort.ViewModels
                 {
                     board.StackHeight = value;
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                    board.ResetSolutions();
                     InitialBoardstate();
                     FirstStep();
                     LoadBoardstate();
@@ -111,6 +113,7 @@ namespace NutSort.ViewModels
                 {
                     board.NutSameColorCount = (byte)Math.Round((double)value / board.ColorCount, 0);
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                    board.ResetSolutions();
                     InitialBoardstate();
                     FirstStep();
                     LoadBoardstate();
@@ -126,6 +129,7 @@ namespace NutSort.ViewModels
                 if (board is not null)
                 {
                     board.ColorCount = value;
+                    board.ResetSolutions();
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
                     InitialBoardstate();
                     FirstStep();
@@ -141,6 +145,7 @@ namespace NutSort.ViewModels
             {
                 if (board is not null)
                 {
+                    board.ResetSolutions();
                     board.CreateInitialBoardstate(value);
                     InitialBoardstate();
                     FirstStep();
@@ -239,15 +244,24 @@ namespace NutSort.ViewModels
         {
             get
             {
-                if (board is not null && solutionNr < 0)
+                if (board is null) { return string.Empty; }
+                if (board.Solutions.Count == 0)
                 {
-                    if (board.IsFinished) { return "Finished"; }
-                    else if (board.ShortestSolution is not null) { return "Solution found"; }
-                    else { return "Ongoing"; }
+                    if (board.InitialBoardstate is not null && board.InitialBoardstate.Boardstates.Count > 0 && board.InitialBoardstate.Boardstates[0].NextMoveIndex > 0)
+                    {
+                        return "Not solvable";
+                    }
+                    else { return "Not started"; }
+                }
+                else if (solutionNr < 0)
+                {
+                    if (board.IsFinished) { return "Board finished"; }
+                    else if (board.ShortestSolution is not null) { return "Solutions found"; }
+                    else { return "No solution found yet"; }
                 }
                 else if (solution is null) { return string.Empty; }
-                else if (solution.IsFinished) { return "Finished"; }
-                else { return "Ongoing"; }
+                else if (solution.IsFinished) { return "Solution finished"; }
+                else { return "Solution is running"; }
             }
         }
 
@@ -320,7 +334,7 @@ namespace NutSort.ViewModels
 
         private void PlayBoard()
         {
-
+            board?.StopSolving();
         }
 
         private void SolveBoard()

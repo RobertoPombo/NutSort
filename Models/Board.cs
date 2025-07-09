@@ -8,6 +8,7 @@ namespace NutSort.Models
     public class Board
     {
         private static readonly string path = GlobalValues.DataDirectory + nameof(Board) + ".json";
+        private static readonly Random random = new();
         public static List<Board> List { get; set; } = [];
 
         public Board() { }
@@ -110,6 +111,7 @@ namespace NutSort.Models
         {
             get
             {
+                if (Solutions.Count == 0) { return false; }
                 for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
                 {
                     if (solutionNr < Solutions.Count && !Solutions[solutionNr].IsFinished) { return false; }
@@ -120,14 +122,7 @@ namespace NutSort.Models
 
         public void Solve()
         {
-            StopSolving();
-            int solutionsCount = Solutions.Count;
-            for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--)
-            {
-                while (Solutions.Count > solutionNr && Solutions[solutionNr].IsSolving) { Thread.Sleep(100); }
-            }
-            Solutions = [];
-            ShortestSolution = null;
+            ResetSolutions();
             if (InitialBoardstate?.Boardstates.Count > 0)
             {
                 InitialBoardstate.SolveStartTime = DateTime.Now;
@@ -146,11 +141,24 @@ namespace NutSort.Models
             }
         }
 
+        public void ResetSolutions()
+        {
+            StopSolving();
+            int solutionsCount = Solutions.Count;
+            for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--)
+            {
+                while (Solutions.Count > solutionNr && Solutions[solutionNr].IsSolving) { Thread.Sleep(100); }
+            }
+            Solutions = [];
+            ShortestSolution = null;
+        }
+
         public void StopSolving()
         {
-            foreach (Solution solution in Solutions)
+            int solutionsCount = Solutions.Count;
+            for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--)
             {
-                solution.StopSolving();
+                if (Solutions.Count > solutionNr) { Solutions[solutionNr].StopSolving(); }
             }
         }
 
@@ -173,13 +181,14 @@ namespace NutSort.Models
             GlobalValues.CurrentLogText = "Boards saved.";
         }
 
-        public void CreateInitialBoardstate(string id)
+        public void CreateInitialBoardstate(string? id = null)
         {
-            string[] ids = id.Split('|');
+            string[] ids = id?.Split('|') ?? [];
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
             List<Nut> nuts = [];
             int slotsCount = 0;
+            //id soweit möglich aufschlüsseln und auf die Stacks verteilen
             for (byte nutNr = 0; nutNr < ids.Length; nutNr++)
             {
                 slotsCount++;
@@ -188,31 +197,92 @@ namespace NutSort.Models
                 if (slotsCount >= stackHeight)
                 {
                     stacks.Add(new() { Nuts = nuts });
-                    if (stacks.Count >= stacks.Count) { break; }
+                    if (stacks.Count >= stackCount) { break; }
                     nuts = [];
                     slotsCount = 0;
                 }
             }
-            for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++) { stacks.Add(new()); }
-            Dictionary<string, int> nutColors = [];
-            for (int stackNr = 0; stackNr < stacks.Count; stackNr++)
+            //Nut entfernen, falls zu viele verschiedene Farben oder zu viele Nuts der gleichen Farbe verteilt
+            Dictionary<NutColor, int> nutColors = [];
+            for (int _stackNr = 0; _stackNr < stacks.Count; _stackNr++)
             {
-                for (int nutNr = stacks[stackNr].Nuts.Count - 1; nutNr >= 0; nutNr--)
+                for (int nutNr = stacks[_stackNr].Nuts.Count - 1; nutNr >= 0; nutNr--)
                 {
-                    if (nutColors.TryGetValue(stacks[stackNr].Nuts[nutNr].NutColor.Name, out int nutSameColorCount))
+                    if (nutColors.TryGetValue(stacks[_stackNr].Nuts[nutNr].NutColor, out int nutSameColorCount))
                     {
-                        if (nutSameColorCount >= NutSameColorCount) { stacks[stackNr].Nuts.RemoveAt(nutNr); }
-                        else { nutColors[stacks[stackNr].Nuts[nutNr].NutColor.Name] += 1; }
+                        if (nutSameColorCount >= NutSameColorCount) { stacks[_stackNr].Nuts.RemoveAt(nutNr); }
+                        else { nutColors[stacks[_stackNr].Nuts[nutNr].NutColor] += 1; }
                     }
                     else
                     {
-                        if (nutColors.Count >= ColorCount) { stacks[stackNr].Nuts.RemoveAt(nutNr); }
-                        else { nutColors[stacks[stackNr].Nuts[nutNr].NutColor.Name] = 1; }
+                        if (nutColors.Keys.Count >= ColorCount) { stacks[_stackNr].Nuts.RemoveAt(nutNr); }
+                        else { nutColors[stacks[_stackNr].Nuts[nutNr].NutColor] = 1; }
                     }
                 }
             }
-
+            //verbleibende zunächst leere Stacks hinzufügen
+            for (int _stackNr = stacks.Count; _stackNr < stackCount; _stackNr++) { stacks.Add(new()); }
+            //Stacks mit zufälligen Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
+            while (nutColors.Keys.Count < ColorCount)
+            {
+                foreach (NutColor nutColor in NutColor.List)
+                {
+                    if (!nutColors.ContainsKey(nutColor)) { nutColors[nutColor] = 0; break; }
+                }
+            }
+            foreach (NutColor nutColor in nutColors.Keys)
+            {
+                while (nutColors[nutColor] < NutSameColorCount)
+                {
+                    int stackNr = random.Next(0, stacks.Count);
+                    if (stacks[stackNr].Nuts.Count < StackHeight)
+                    {
+                        stacks[stackNr].Nuts.Add(new(nutColor));
+                        nutColors[nutColor]++;
+                    }
+                }
+            }
             InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
+            if (string.IsNullOrEmpty(id)) { RandomizeInitialBoardstate(); }
+        }
+
+        private void RandomizeInitialBoardstate(int interationCount = 100)
+        {
+            if (InitialBoardstate is not null && InitialBoardstate.Boardstates.Count > 0)
+            {
+                Boardstate randomBoard = InitialBoardstate.Boardstates[0];
+                for (int stackNr0 = randomBoard.Stacks.Count - 1; stackNr0 >= 0; stackNr0--)
+                {
+                    for (int stackNr1 = 0; stackNr1 < stackNr0; stackNr1++)
+                    {
+                        int slotNr0 = randomBoard.Stacks[stackNr0].Nuts.Count - 1;
+                        int slotNr1 = randomBoard.Stacks[stackNr1].Nuts.Count;
+                        while (slotNr0 >= 0 && slotNr1 < stackHeight)
+                        {
+                            randomBoard.Stacks[stackNr1].Nuts.Add(randomBoard.Stacks[stackNr0].Nuts[slotNr0]);
+                            randomBoard.Stacks[stackNr0].Nuts.RemoveAt(slotNr0);
+                            slotNr0 -= 1;
+                            slotNr1 += 1;
+                        }
+                    }
+                }
+                for (int iterationNr = 0; iterationNr < interationCount; iterationNr++)
+                {
+                    int stackNr1 = random.Next(randomBoard.Stacks.Count);
+                    int stackNr2 = random.Next(randomBoard.Stacks.Count);
+                    if (randomBoard.Stacks[stackNr1].Nuts.Count > 0 && randomBoard.Stacks[stackNr2].Nuts.Count > 0)
+                    {
+                        int slotNr1 = random.Next(randomBoard.Stacks[stackNr1].Nuts.Count);
+                        int slotNr2 = random.Next(randomBoard.Stacks[stackNr2].Nuts.Count);
+                        (randomBoard.Stacks[stackNr1].Nuts[slotNr1], randomBoard.Stacks[stackNr2].Nuts[slotNr2]) = (randomBoard.Stacks[stackNr2].Nuts[slotNr2], randomBoard.Stacks[stackNr1].Nuts[slotNr1]);
+                    }
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return levelName;
         }
     }
 }
