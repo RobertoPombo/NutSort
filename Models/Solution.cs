@@ -163,7 +163,6 @@ namespace NutSort.Models
         {
             Boardstate state = Boardstates[^2];
             Nut? movedNut = state.Stacks[state.PossibleMoves[state.NextMoveIndex - 1].FromStackNr].TopNut;
-            movedNut?.Positions.RemoveAt(movedNut.Positions.Count - 1);
             Boardstates.RemoveAt(Boardstates.Count - 1);
         }
     }

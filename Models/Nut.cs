@@ -35,7 +35,5 @@ namespace NutSort.Models
                 else { nutColor = _nutColor; }
             }
         }
-
-        public List<Position> Positions { get; set; } = [];
     }
 }

@@ -15,13 +15,12 @@ namespace NutSort.Models
             Stack toStack = boardstate.Stacks[ToStackNr];
             if (fromStack.TopNut is not null)
             {
-                if (fromStack.TopNut.Positions.Count > 0)
+                NutColor topNutColor = fromStack.TopNut.NutColor;
+                while (fromStack.TopNut is not null && fromStack.TopNut.NutColor == topNutColor && toStack.Nuts.Count < boardstate.Solution.Board.StackHeight)
                 {
-                    fromStack.TopNut.Positions[^1].StackNr = ToStackNr;
-                    fromStack.TopNut.Positions[^1].Level = (byte)toStack.Nuts.Count;
+                    toStack.Nuts.Add(fromStack.TopNut);
+                    fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);
                 }
-                toStack.Nuts.Add(fromStack.TopNut);
-                fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);
             }
         }
     }

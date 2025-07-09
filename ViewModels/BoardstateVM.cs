@@ -267,6 +267,7 @@ namespace NutSort.ViewModels
                 Thread.Sleep(animationDelayMs);
                 animationIsSleeping = false;
             }
+            AnimationIsRunning = false;
         }
 
         public UICmd PreviousSolutionCmd { get; set; }

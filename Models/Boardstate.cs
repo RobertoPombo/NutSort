@@ -15,10 +15,6 @@ namespace NutSort.Models
                 foreach (Nut nut in stacks[stackNr].Nuts) { nuts.Add(nut); }
                 Stack stack = new() { Nuts = nuts, Boardstate = this };
                 Stacks.Add(stack);
-                for (byte nutNr = 0; nutNr < stack.Nuts.Count; nutNr++)
-                {
-                    stack.Nuts[nutNr].Positions.Add(new() { StackNr = stackNr, Level = nutNr });
-                }
             }
         }
 
@@ -69,22 +65,7 @@ namespace NutSort.Models
                         fromStackNr != toStackNr && !toStack.IsFull && !fromStack.IsFinished &&
                         (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty))
                     {
-                        bool foundReverseMove = false;
-                        int fromStackLevel = fromStack.Nuts.Count;
-                        int toStackLevel = toStack.Nuts.Count + 1;
-                        List<Position> positions = fromStack.TopNut?.Positions ?? [];
-                        for (int positionNr = 1; positionNr < positions.Count; positionNr++)
-                        {
-                            if (fromStackNr == positions[positionNr].StackNr && toStackNr == positions[positionNr - 1].StackNr && fromStackLevel == positions[positionNr].Level && toStackLevel == positions[positionNr - 1].Level)
-                            {
-                                foundReverseMove = true;
-                                break;
-                            }
-                        }
-                        if (!foundReverseMove)
-                        {
-                            PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
-                        }
+                        PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
                     }
                 }
             }
