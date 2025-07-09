@@ -7,10 +7,10 @@ namespace NutSort.Models
         private static int nextId = 0;
 
         public Nut() { }
-        public Nut(NutColor _nutColor)
+        public Nut(NutColor nutColor)
         {
             Id = nextId;
-            nutColor = _nutColor;
+            NutColor = nutColor;
         }
 
         private int id = -1;
@@ -20,20 +20,6 @@ namespace NutSort.Models
             set { id = value; nextId = Math.Max(value + 1, nextId + 1); }
         }
 
-        private NutColor nutColor = new();
-        public NutColor NutColor
-        {
-            get { return nutColor; }
-            set
-            {
-                NutColor? _nutColor = NutColor.GetByName(value.Name);
-                if (_nutColor is null)
-                {
-                    NutColor.List.Add(value);
-                    nutColor = value;
-                }
-                else { nutColor = _nutColor; }
-            }
-        }
+        public NutColor NutColor { get; set; } = new();
     }
 }

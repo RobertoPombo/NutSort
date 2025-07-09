@@ -29,6 +29,32 @@ namespace NutSort.Models
             return null;
         }
 
+        public static void UpdateList()
+        {
+            foreach (Board board in Board.List)
+            {
+                if (board.InitialBoardstate is not null) { UpdateList(board.InitialBoardstate); }
+                foreach (Solution solution in board.Solutions) { UpdateList(solution); }
+            }
+            SaveJson();
+        }
+
+        private static void UpdateList(Solution solution)
+        {
+            foreach (Boardstate boardstate in solution.Boardstates)
+            {
+                foreach (Stack stack in boardstate.Stacks)
+                {
+                    foreach (Nut nut in stack.Nuts)
+                    {
+                        NutColor? nutColor = GetByName(nut.NutColor.Name);
+                        if (nutColor is null) { List.Add(nut.NutColor); }
+                        else { nut.NutColor = nutColor; }
+                    }
+                }
+            }
+        }
+
         public static void LoadJson()
         {
             if (!File.Exists(path)) { File.WriteAllText(path, JsonConvert.SerializeObject(new List<NutColor>(), Formatting.Indented), Encoding.Unicode); }

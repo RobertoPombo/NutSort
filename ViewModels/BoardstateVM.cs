@@ -42,7 +42,7 @@ namespace NutSort.ViewModels
         private Boardstate? boardstate = null;
         private int solutionNr = 0;
         private int stepNr = 0;
-        private int animationDelayMs = 750;
+        private int animationDelayMs = 1000;
         private bool animationIsReversed = false;
         private bool animationIsSleeping = false;
 
@@ -256,7 +256,13 @@ namespace NutSort.ViewModels
             get
             {
                 int count = 0;
-                foreach (Solution _solution in Board?.Solutions ?? []) { if (!_solution.IsFinished) { count++; } }
+                if (Board is not null)
+                {
+                    for (int solutionNr = Board.Solutions.Count - 1; solutionNr >= 0; solutionNr--)
+                    {
+                        if (solutionNr < Board.Solutions.Count && !Board.Solutions[solutionNr].IsFinished) { count++; }
+                    }
+                }
                 return count;
             }
         }
@@ -266,7 +272,13 @@ namespace NutSort.ViewModels
             get
             {
                 int count = 0;
-                foreach (Solution _solution in Board?.Solutions ?? []) { if (_solution.IsFinished) { count++; } }
+                if (Board is not null)
+                {
+                    for (int solutionNr = Board.Solutions.Count - 1; solutionNr >= 0; solutionNr--)
+                    {
+                        if (solutionNr < Board.Solutions.Count && Board.Solutions[solutionNr].IsFinished) { count++; }
+                    }
+                }
                 return count;
             }
         }

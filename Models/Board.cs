@@ -110,9 +110,9 @@ namespace NutSort.Models
         {
             get
             {
-                foreach (Solution solution in Solutions)
+                for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
                 {
-                    if (!solution.IsFinished) { return false; }
+                    if (solutionNr < Solutions.Count && !Solutions[solutionNr].IsFinished) { return false; }
                 }
                 return true;
             }
@@ -120,27 +120,29 @@ namespace NutSort.Models
 
         public void Solve()
         {
-            foreach (Board board in Board.List)
+            StopSolving();
+            int solutionsCount = Solutions.Count;
+            for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--)
             {
-                board.StopSolving();
-                int solutionsCount = board.Solutions.Count;
-                for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--) { while (board.Solutions.Count > solutionNr && board.Solutions[solutionNr].IsSolving) { Thread.Sleep(100); } } //todo: Wirft Fehler
+                while (Solutions.Count > solutionNr && Solutions[solutionNr].IsSolving) { Thread.Sleep(100); }
             }
             Solutions = [];
+            ShortestSolution = null;
             if (InitialBoardstate?.Boardstates.Count > 0)
             {
                 InitialBoardstate.SolveStartTime = DateTime.Now;
+                InitialBoardstate.Boardstates[0].NextMoveIndex = 0;
                 InitialBoardstate.Boardstates[0].UpdatePossibleMoves();
                 for (int moveNr = 0; moveNr < InitialBoardstate.Boardstates[0].PossibleMoves.Count; moveNr++)
                 {
                     Solutions.Add(new (InitialBoardstate.Boardstates[0], this));
                     InitialBoardstate.Boardstates[0].NextMoveIndex++;
                 }
-                foreach (Solution solution in Solutions)
+                for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
                 {
-                    new Thread(solution.Solve).Start();
+                    if (solutionNr < Solutions.Count) { new Thread(Solutions[solutionNr].Solve).Start(); }
                 }
-                //new Thread(Solutions[0].Solve).Start();
+                // Thread(Solutions[0].Solve).Start();
             }
         }
 
@@ -159,9 +161,9 @@ namespace NutSort.Models
             {
                 List = JsonConvert.DeserializeObject<List<Board>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
                 GlobalValues.CurrentLogText = "Boards restored.";
+                NutColor.UpdateList();
             }
             catch { GlobalValues.CurrentLogText = "Restore boards failed!"; }
-            NutColor.SaveJson();
         }
 
         public static void SaveJson()
@@ -186,14 +188,12 @@ namespace NutSort.Models
                 if (slotsCount >= stackHeight)
                 {
                     stacks.Add(new() { Nuts = nuts });
+                    if (stacks.Count >= stacks.Count) { break; }
                     nuts = [];
                     slotsCount = 0;
                 }
             }
-            for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++)
-            {
-                stacks.Add(new());
-            }
+            for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++) { stacks.Add(new()); }
             Dictionary<string, int> nutColors = [];
             for (int stackNr = 0; stackNr < stacks.Count; stackNr++)
             {
