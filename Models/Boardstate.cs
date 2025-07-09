@@ -33,10 +33,10 @@ namespace NutSort.Models
                     for (int nutNr = 0; nutNr < Solution.Board.StackHeight; nutNr++)
                     {
                         if (nutNr < stack.Nuts.Count) { id += stack.Nuts[nutNr].NutColor.Name + "|"; }
-                        else { id += "|"; }
+                        else { id += "#|"; }
                     }
                 }
-                return id;
+                return id[..^1];
             }
         }
 

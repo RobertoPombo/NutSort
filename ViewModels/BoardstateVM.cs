@@ -10,9 +10,17 @@ namespace NutSort.ViewModels
     {
         public BoardstateVM()
         {
+            Boards = [];
+            foreach (Board _board in Board.List) { Boards.Add(_board); }
+            if (boards.Count > 0) { Board = boards[0]; }
             BoardstateRows = [];
-            if (Board.List.Count > 0) { Board = Board.List[0]; }
             SolutionNr = -1;
+            PlayBoardCmd = new UICmd((o) => PlayBoard());
+            SolveBoardCmd = new UICmd((o) => SolveBoard());
+            EditBoardCmd = new UICmd((o) => EditBoard());
+            RandomizeBoardCmd = new UICmd((o) => RandomizeBoard());
+            CreateNewBoardCmd = new UICmd((o) => CreateNewBoard());
+            SaveBoardCmd = new UICmd((o) => SaveBoard());
             PreviousSolutionCmd = new UICmd((o) => PreviousSolution());
             NextSolutionCmd = new UICmd((o) => NextSolution());
             InitialBoardstateCmd = new UICmd((o) => InitialBoardstate());
@@ -21,13 +29,13 @@ namespace NutSort.ViewModels
             NextStepCmd = new UICmd((o) => NextStep());
             FirstStepCmd = new UICmd((o) => FirstStep());
             LastStepCmd = new UICmd((o) => LastStep());
-            PlayCmd = new UICmd((o) => PlayAnimation());
-            StopCmd = new UICmd((o) => StopAnimation());
-            ReverseCmd = new UICmd((o) => ReverseAnimation());
-            ResetCmd = new UICmd((o) => ResetAnimation());
-            RaisePropertyChanged(nameof(BoardstateRows));
+            PlayAnimationCmd = new UICmd((o) => PlayAnimation());
+            StopAnimationCmd = new UICmd((o) => StopAnimation());
+            ReverseAnimationCmd = new UICmd((o) => ReverseAnimation());
+            ResetAnimationCmd = new UICmd((o) => ResetAnimation());
         }
 
+        private ObservableCollection<Board> boards = [];
         private Board board = new();
         private ObservableCollection<BoardstateRow> boardstateRows = [];
         private Solution? solution = null;
@@ -38,16 +46,104 @@ namespace NutSort.ViewModels
         private bool animationIsReversed = false;
         private bool animationIsSleeping = false;
 
+        public ObservableCollection<Board> Boards
+        {
+            get { return boards; }
+            set { boards = value; }
+        }
+
         public Board Board
         {
             get { return board; }
-            set { board = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(SolutionCount)); }
+            set
+            {
+                board = value;
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
         }
 
         public ObservableCollection<BoardstateRow> BoardstateRows
         {
             get { return boardstateRows; }
-            set { boardstateRows = value; RaisePropertyChanged(); }
+            set { boardstateRows = value; }
+        }
+
+        public byte StackCount
+        {
+            get { return board.StackCount; }
+            set
+            {
+                board.StackCount = value;
+                if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        public byte StackHeight
+        {
+            get { return board.StackHeight; }
+            set
+            {
+                board.StackHeight = value;
+                if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        public uint NutCount
+        {
+            get { return (uint)board.NutSameColorCount * board.ColorCount; }
+            set
+            {
+                board.NutSameColorCount = (byte)Math.Round((double)value / board.ColorCount, 0);
+                if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        public byte ColorCount
+        {
+            get { return board.ColorCount; }
+            set
+            {
+                board.ColorCount = value;
+                if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        public string BoardColorCode
+        {
+            get { return boardstate?.Id ?? string.Empty; }
+            set
+            {
+                board.CreateInitialBoardstate(value);
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        public byte MaxColumnsCount
+        {
+            get { return board.MaxColumnsCount; }
+            set
+            {
+                board.MaxColumnsCount = value;
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
         }
 
         public int SolutionCount
@@ -127,13 +223,13 @@ namespace NutSort.ViewModels
             {
                 if (solutionNr < 0)
                 {
-                    if (board.IsFinished) { return "(finished)"; }
-                    else if (board.ShortestSolution is not null) { return "(solution found)"; }
-                    else { return "(ongoing)"; }
+                    if (board.IsFinished) { return "Finished"; }
+                    else if (board.ShortestSolution is not null) { return "Solution found"; }
+                    else { return "Ongoing"; }
                 }
                 else if (solution is null) { return string.Empty; }
-                else if (solution.IsFinished) { return "(finished)"; }
-                else { return "(ongoing)"; }
+                else if (solution.IsFinished) { return "Finished"; }
+                else { return "Ongoing"; }
             }
         }
 
@@ -159,6 +255,14 @@ namespace NutSort.ViewModels
 
         private void LoadBoardstate()
         {
+            RaisePropertyChanged(nameof(Boards));
+            RaisePropertyChanged(nameof(Board));
+            RaisePropertyChanged(nameof(StackCount));
+            RaisePropertyChanged(nameof(StackHeight));
+            RaisePropertyChanged(nameof(NutCount));
+            RaisePropertyChanged(nameof(ColorCount));
+            RaisePropertyChanged(nameof(BoardColorCode));
+            RaisePropertyChanged(nameof(MaxColumnsCount));
             RaisePropertyChanged(nameof(SolutionCount));
             RaisePropertyChanged(nameof(StepCount));
             RaisePropertyChanged(nameof(IterationCount));
@@ -182,6 +286,36 @@ namespace NutSort.ViewModels
                 if (stacks.Count > 0) { boardstateRows.Add(new() { Stacks = stacks }); }
             }
             RaisePropertyChanged(nameof(BoardstateRows));
+        }
+
+        private void PlayBoard()
+        {
+
+        }
+
+        private void SolveBoard()
+        {
+            board.Solve();
+        }
+
+        private void EditBoard()
+        {
+
+        }
+
+        private void RandomizeBoard()
+        {
+
+        }
+
+        private void CreateNewBoard()
+        {
+
+        }
+
+        private void SaveBoard()
+        {
+
         }
 
         private void PreviousSolution()
@@ -270,6 +404,12 @@ namespace NutSort.ViewModels
             AnimationIsRunning = false;
         }
 
+        public UICmd PlayBoardCmd { get; set; }
+        public UICmd SolveBoardCmd { get; set; }
+        public UICmd EditBoardCmd { get; set; }
+        public UICmd RandomizeBoardCmd { get; set; }
+        public UICmd CreateNewBoardCmd { get; set; }
+        public UICmd SaveBoardCmd { get; set; }
         public UICmd PreviousSolutionCmd { get; set; }
         public UICmd NextSolutionCmd { get; set; }
         public UICmd InitialBoardstateCmd { get; set; }
@@ -278,9 +418,9 @@ namespace NutSort.ViewModels
         public UICmd NextStepCmd { get; set; }
         public UICmd FirstStepCmd { get; set; }
         public UICmd LastStepCmd { get; set; }
-        public UICmd PlayCmd { get; set; }
-        public UICmd StopCmd { get; set; }
-        public UICmd ReverseCmd { get; set; }
-        public UICmd ResetCmd { get; set; }
+        public UICmd PlayAnimationCmd { get; set; }
+        public UICmd StopAnimationCmd { get; set; }
+        public UICmd ReverseAnimationCmd { get; set; }
+        public UICmd ResetAnimationCmd { get; set; }
     }
 }

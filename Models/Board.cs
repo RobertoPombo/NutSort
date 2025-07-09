@@ -11,19 +11,36 @@ namespace NutSort.Models
         public static List<Board> List { get; set; } = [];
 
         public Board() { }
-        public Board(byte stackCount, byte stackHeight, byte nutSameColorCount, byte colorCount, byte rowsCount)
+        public Board(byte stackCount, byte stackHeight, byte nutSameColorCount, byte colorCount, byte maxColumnsCount, string? _levelName = null)
         {
             StackCount = stackCount;
             StackHeight = stackHeight;
             NutSameColorCount = nutSameColorCount;
             ColorCount = colorCount;
-            MaxColumnsCount = rowsCount;
+            MaxColumnsCount = maxColumnsCount;
             List.Add(this);
+            if (_levelName is null) { LevelName += List.Count.ToString(); }
+            else { LevelName = _levelName; }
         }
 
         public Solution? InitialBoardstate { get; set; } = null;
         public List<Solution> Solutions { get; set; } = [];
         public Solution? ShortestSolution { get; set; } = null;
+
+        private string levelName = nameof(Board) + " #";
+        public string LevelName
+        {
+            get { return levelName; }
+            set
+            {
+                bool levelExists = false;
+                foreach (Board board in List)
+                {
+                    if (board.levelName == value) { levelExists = true; break; }
+                }
+                if (!levelExists) { levelName = value; }
+            }
+        }
 
         private byte stackCount = 14;
         public byte StackCount
@@ -98,6 +115,13 @@ namespace NutSort.Models
 
         public void Solve()
         {
+            foreach (Board board in Board.List)
+            {
+                board.StopSolving();
+                int solutionsCount = board.Solutions.Count;
+                for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--) { while (board.Solutions.Count > solutionNr && board.Solutions[solutionNr].IsSolving) { Thread.Sleep(100); } }
+            }
+            Solutions = [];
             if (InitialBoardstate?.Boardstates.Count > 0)
             {
                 InitialBoardstate.SolveStartTime = DateTime.Now;
@@ -164,6 +188,23 @@ namespace NutSort.Models
             for (byte stackNr = (byte)stacks.Count; stackNr < stackCount; stackNr++)
             {
                 stacks.Add(new());
+            }
+            Dictionary<string, int> nutColors = [];
+            for (int stackNr = 0; stackNr < stacks.Count; stackNr++)
+            {
+                for (int nutNr = stacks[stackNr].Nuts.Count - 1; nutNr >= 0; nutNr--)
+                {
+                    if (nutColors.TryGetValue(stacks[stackNr].Nuts[nutNr].NutColor.Name, out int nutSameColorCount))
+                    {
+                        if (nutSameColorCount >= NutSameColorCount) { stacks[stackNr].Nuts.RemoveAt(nutNr); }
+                        else { nutColors[stacks[stackNr].Nuts[nutNr].NutColor.Name] += 1; }
+                    }
+                    else
+                    {
+                        if (nutColors.Count >= ColorCount) { stacks[stackNr].Nuts.RemoveAt(nutNr); }
+                        else { nutColors[stacks[stackNr].Nuts[nutNr].NutColor.Name] = 1; }
+                    }
+                }
             }
             InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
         }

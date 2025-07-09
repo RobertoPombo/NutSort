@@ -89,12 +89,15 @@ namespace NutSort.Models
             }
         }
 
+        public bool IsSolving { get; set; } = false;
+
         private bool isAllowedToSolve = true;
 
         public void Solve()
         {
             while (Boardstates.Count > 0 && isAllowedToSolve)
             {
+                IsSolving = true;
                 Boardstate state = Boardstates[^1];
                 if (IsFinished)
                 {
@@ -115,6 +118,7 @@ namespace NutSort.Models
                 IterationCount++;
                 TotalProcessDurationSec = (int)(DateTime.Now - SolveStartTime).TotalSeconds;
             }
+            IsSolving = false;
         }
 
         public void StopSolving()
