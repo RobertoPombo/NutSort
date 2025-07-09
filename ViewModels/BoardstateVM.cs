@@ -388,12 +388,13 @@ namespace NutSort.ViewModels
 
         private void ResetAnimation()
         {
+            AnimationIsRunning = false;
             StepNr = 0;
         }
 
         private void PlayAnimationThread()
         {
-            while (StepNr < StepCount && AnimationIsRunning)
+            while (((!animationIsReversed && StepNr < StepCount - 1) || (animationIsReversed && StepNr > 0)) && AnimationIsRunning)
             {
                 if (animationIsReversed) { StepNr--; }
                 else { StepNr++; }

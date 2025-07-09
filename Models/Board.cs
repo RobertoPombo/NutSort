@@ -119,7 +119,7 @@ namespace NutSort.Models
             {
                 board.StopSolving();
                 int solutionsCount = board.Solutions.Count;
-                for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--) { while (board.Solutions.Count > solutionNr && board.Solutions[solutionNr].IsSolving) { Thread.Sleep(100); } }
+                for (int solutionNr = solutionsCount - 1; solutionNr >= 0; solutionNr--) { while (board.Solutions.Count > solutionNr && board.Solutions[solutionNr].IsSolving) { Thread.Sleep(100); } } //todo: Wirft Fehler
             }
             Solutions = [];
             if (InitialBoardstate?.Boardstates.Count > 0)

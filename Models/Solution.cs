@@ -108,7 +108,7 @@ namespace NutSort.Models
                     Solution newSolution = new(Boardstates, IterationCount, TotalProcessDurationSec);
                     Board.Solutions.Add(newSolution);
                     newSolution.TryExcecuteNextMove(newSolution.Boardstates[^1]);
-                    new Thread(newSolution.Solve).Start();
+                    if (isAllowedToSolve) { new Thread(newSolution.Solve).Start(); }
                     isAllowedToSolve = false;
                 }
                 else
