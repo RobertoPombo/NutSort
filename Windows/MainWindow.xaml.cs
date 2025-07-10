@@ -19,8 +19,8 @@ namespace NutSort.Windows
             Board.LoadJson();
             UpdateThemeColors();
             InitializeComponent();
-            Width = GlobalWinValues.screenWidth * 0.21;
-            Height = GlobalWinValues.screenHeight * 0.6;
+            Width = GlobalWinValues.screenWidth * 0.18;
+            Height = GlobalWinValues.screenHeight * 0.63;
             Left = ((GlobalWinValues.screenWidth / 2) - (Width / 2)) * 1;
             Top = ((GlobalWinValues.screenHeight / 2) - (Height / 2)) * 1;
             Closing += CloseWindow;

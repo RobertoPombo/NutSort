@@ -6,12 +6,19 @@
              xmlns:local="clr-namespace:NutSort.Windows"
              mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid Margin="5">
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" Margin="5,20" HorizontalAlignment="Center">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="40"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -23,102 +30,122 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="1" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="2" Command="{Binding EditBoardCmd}" Content="Edit" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="3" Command="{Binding CreateNewBoardCmd}" Content="New" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="4" Command="{Binding DeleteBoardCmd}" Content="Delete" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <Button Grid.Row="0" Grid.Column="5" Command="{Binding SaveBoardCmd}" Content="Save" Style="{StaticResource ButtonStyle}" Margin="5"/>
-            <ComboBox Grid.Row="0" Grid.Column="6" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            <Label Grid.Row="0" Grid.Column="0" Content="Level" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="1" Content="Stacks" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="2" Content="Height" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="3" Content="Colors" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="4" Content="Nuts" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="5" Content="Columns" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+            <Label Grid.Row="0" Grid.Column="6" Content="Code" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
+
+            <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Board.LevelName, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" MinWidth="50" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StackCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding StackHeight, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ColorCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding NutCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding MaxColumnsCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding BoardColorCode, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Width="40" Margin="5"/>
+
+            <ComboBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       SelectedValue="{Binding Board, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       DisplayMemberPath="LevelName"
                       Style="{StaticResource ComboBoxStyle}" VerticalContentAlignment="Center" Margin="5" Cursor="Hand"/>
-
-            <Label Grid.Row="1" Grid.Column="0" Content="Stacks" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="1" Content="Height" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="2" Content="Nuts" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="3" Content="Colors" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="4" Content="Columns" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="5" Content="Code" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-            <Label Grid.Row="1" Grid.Column="6" Content="Level" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
-
-            <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding StackCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding StackHeight, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding NutCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding ColorCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding MaxColumnsCount, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding BoardColorCode, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" Width="40" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding Board.LevelName, UpdateSourceTrigger=LostFocus}" Style="{StaticResource TextBoxStyle}" MinWidth="50" Margin="5"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="6" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Command="{Binding LoadBoardCmd}" Style="{StaticResource ImpButtonStyle}" Margin="10,5"/>
+                <Button Command="{Binding SaveBoardCmd}" Style="{StaticResource SavButtonStyle}" Margin="10,5"/>
+                <Button Command="{Binding DeleteBoardCmd}" Style="{StaticResource BinButtonStyle}" Margin="10,5"/>
+                <Button Command="{Binding CreateNewBoardCmd}" Style="{StaticResource AddButtonStyle}" Margin="10,5"/>
+                <Button Command="{Binding RandomizeBoardCmd}" Content="Randomize" Style="{StaticResource ButtonStyle}" Margin="0,5"/>
+                <Button Command="{Binding EditBoardCmd}" Content="Edit" Style="{StaticResource ButtonStyle}" Margin="0,5"/>
+            </StackPanel>
         </Grid>
-        <ItemsControl ItemsSource="{Binding BoardstateRows}" Margin="5" Background="Transparent" HorizontalAlignment="Center" Width="Auto">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" Margin="5" Background="Transparent"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Background="Transparent" Height="Auto">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="5" Background="Transparent"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Background="Transparent" Height="Auto">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="60"/>
-                                        </Grid.ColumnDefinitions>
-                                        <ItemsControl Grid.Column="0" ItemsSource="{Binding EmptyNutSlots}" Margin="5">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical" Margin="0">
-                                                        <StackPanel.LayoutTransform>
-                                                            <RotateTransform Angle="180"/>
-                                                        </StackPanel.LayoutTransform>
-                                                    </StackPanel>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <ItemsControl Grid.Column="0" ItemsSource="{Binding Nuts}" Margin="5">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical" Margin="0">
-                                                        <StackPanel.LayoutTransform>
-                                                            <RotateTransform Angle="180"/>
-                                                        </StackPanel.LayoutTransform>
-                                                    </StackPanel>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Grid Margin="5" HorizontalAlignment="Center">
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+            <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <ItemsControl ItemsSource="{Binding BoardstateRows}" Background="Transparent" HorizontalAlignment="Center" Width="Auto">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" Margin="5" Background="Transparent"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="Transparent" Height="Auto">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ItemsControl Grid.Column="0" ItemsSource="{Binding Stacks}" Margin="5" Background="Transparent" Width="Auto">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="5" Background="Transparent"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Background="Transparent" Height="Auto">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ItemsControl Grid.Column="0" ItemsSource="{Binding EmptyNutSlots}" Margin="5">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical" Margin="0">
+                                                                <StackPanel.LayoutTransform>
+                                                                    <RotateTransform Angle="180"/>
+                                                                </StackPanel.LayoutTransform>
+                                                            </StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <ItemsControl Grid.Column="0" ItemsSource="{Binding Nuts}" Margin="5">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical" Margin="0">
+                                                                <StackPanel.LayoutTransform>
+                                                                    <RotateTransform Angle="180"/>
+                                                                </StackPanel.LayoutTransform>
+                                                            </StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Left" Width="175" Margin="25,5,10,5"/>
+                    <Button Grid.Row="0" Grid.Column="1" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Right" Width="175" Margin="10,5,25,5"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" Margin="5" HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -160,7 +187,8 @@
             <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding AnimationDelayMs}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
             <Label Grid.Row="4" Grid.Column="6" Content="ms" Style="{StaticResource LabelStyle}" Margin="0"/>
         </Grid>
-        <StackPanel Orientation="Vertical" Margin="0" HorizontalAlignment="Center">
+        
+        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Center">
                 <Label Grid.Row="0" Grid.Column="0" Content="Iterations:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
                 <Label Grid.Row="0" Grid.Column="1" Content="{Binding IterationCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
@@ -176,5 +204,5 @@
             </StackPanel>
             <Label Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2" Content="{Binding State}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" Margin="0"/>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </UserControl>

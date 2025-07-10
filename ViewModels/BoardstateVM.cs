@@ -13,11 +13,12 @@ namespace NutSort.ViewModels
             Boards = [];
             foreach (Board _board in Board.List) { Boards.Add(_board); }
             if (boards.Count > 0) { Board = boards[0]; }
-            BoardstateRows = [];
-            SolutionNr = -1;
+            InitialBoardstate();
             PlayBoardCmd = new UICmd((o) => PlayBoard());
             SolveBoardCmd = new UICmd((o) => SolveBoard());
+            LoadBoardCmd = new UICmd((o) => LoadBoard());
             EditBoardCmd = new UICmd((o) => EditBoard());
+            RandomizeBoardCmd = new UICmd((o) => RandomizeBoard());
             CreateNewBoardCmd = new UICmd((o) => CreateNewBoard());
             DeleteBoardCmd = new UICmd((o) => DeleteBoard());
             SaveBoardCmd = new UICmd((o) => SaveBoard());
@@ -342,9 +343,43 @@ namespace NutSort.ViewModels
             board?.Solve();
         }
 
+        private void LoadBoard()
+        {
+            Board.List = [];
+            NutColor.LoadJson();
+            Board.LoadJson();
+            Boards = [];
+            foreach (Board _board in Board.List) { Boards.Add(_board); }
+            RaisePropertyChanged(nameof(Boards));
+            if (boards.Count > 0) { Board = boards[0]; }
+        }
+
         private void EditBoard()
         {
 
+        }
+
+        private void RandomizeBoard()
+        {
+            if (board is not null)
+            {
+                board.CreateInitialBoardstate();
+                InitialBoardstate();
+                FirstStep();
+                LoadBoardstate();
+            }
+        }
+
+        private void CreateNewBoard()
+        {
+            board ??= new();
+            string newInitialBoardstate = boardstate?.Id ?? string.Empty;
+            Board = new(board.StackCount, board.StackHeight, board.NutSameColorCount, board.ColorCount, board.MaxColumnsCount);
+            Board.CreateInitialBoardstate(newInitialBoardstate);
+            Boards.Add(board);
+            InitialBoardstate();
+            FirstStep();
+            LoadBoardstate();
         }
 
         private void DeleteBoard()
@@ -358,18 +393,6 @@ namespace NutSort.ViewModels
                 if (boards.Count > 0) { Board = boards[0]; }
                 else { Board = null; }
             }
-        }
-
-        private void CreateNewBoard()
-        {
-            board ??= new();
-            string newInitialBoardstate = board.InitialBoardstate?.Boardstates[0].Id ?? string.Empty;
-            Board = new(board.StackCount, board.StackHeight, board.NutSameColorCount, board.ColorCount, board.MaxColumnsCount);
-            Board.CreateInitialBoardstate(newInitialBoardstate);
-            Boards.Add(board);
-            InitialBoardstate();
-            FirstStep();
-            LoadBoardstate();
         }
 
         private void SaveBoard()
@@ -466,9 +489,11 @@ namespace NutSort.ViewModels
 
         public UICmd PlayBoardCmd { get; set; }
         public UICmd SolveBoardCmd { get; set; }
+        public UICmd LoadBoardCmd { get; set; }
         public UICmd EditBoardCmd { get; set; }
-        public UICmd DeleteBoardCmd { get; set; }
+        public UICmd RandomizeBoardCmd { get; set; }
         public UICmd CreateNewBoardCmd { get; set; }
+        public UICmd DeleteBoardCmd { get; set; }
         public UICmd SaveBoardCmd { get; set; }
         public UICmd PreviousSolutionCmd { get; set; }
         public UICmd NextSolutionCmd { get; set; }

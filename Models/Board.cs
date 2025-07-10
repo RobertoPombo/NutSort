@@ -28,7 +28,7 @@ namespace NutSort.Models
         public List<Solution> Solutions { get; set; } = [];
         public Solution? ShortestSolution { get; set; } = null;
 
-        private string levelName = nameof(Board) + " #";
+        private string levelName = "#";
         public string LevelName
         {
             get { return levelName; }
@@ -246,7 +246,7 @@ namespace NutSort.Models
             if (string.IsNullOrEmpty(id)) { RandomizeInitialBoardstate(); }
         }
 
-        private void RandomizeInitialBoardstate(int interationCount = 100)
+        private void RandomizeInitialBoardstate(int iterationCount = 1000)
         {
             if (InitialBoardstate is not null && InitialBoardstate.Boardstates.Count > 0)
             {
@@ -266,7 +266,7 @@ namespace NutSort.Models
                         }
                     }
                 }
-                for (int iterationNr = 0; iterationNr < interationCount; iterationNr++)
+                for (int iterationNr = 0; iterationNr < iterationCount; iterationNr++)
                 {
                     int stackNr1 = random.Next(randomBoard.Stacks.Count);
                     int stackNr2 = random.Next(randomBoard.Stacks.Count);
