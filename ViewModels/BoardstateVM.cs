@@ -398,6 +398,8 @@ namespace NutSort.ViewModels
                             solution.Boardstates.Add(boardstate);
                             move.Execute(boardstate);
                             move = new();
+                            solution.IterationCount++;
+                            solution.TotalProcessDurationSec = (int)(DateTime.Now - solution.SolveStartTime).TotalSeconds;
                             LastStep();
                         }
                     }
