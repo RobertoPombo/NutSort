@@ -354,6 +354,14 @@ namespace NutSort.ViewModels
         {
             if (obj.GetType() == typeof(Stack) && boardstate is not null && solution is not null && move is not null)
             {
+                int currentBoardstateNr = solution.Boardstates.IndexOf(boardstate);
+                if (currentBoardstateNr < solution.Boardstates.Count - 1)
+                {
+                    for (int boardstateNr = solution.Boardstates.Count - 1; boardstateNr > currentBoardstateNr; boardstateNr--)
+                    {
+                        solution.Boardstates.RemoveAt(boardstateNr);
+                    }
+                }
                 Stack stack = (Stack)obj;
                 int stackNr = boardstate.Stacks.IndexOf(stack);
                 if (move.FromStackNr < 0 && boardstate.Stacks[stackNr].TopNut is not null)
