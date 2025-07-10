@@ -39,9 +39,9 @@ namespace NutSort.Models
                 {
                     byte amount = 1;
                     NutColor nutColor = TopNut.NutColor;
-                    foreach (Nut nut in Nuts)
+                    for (int nutNr = Nuts.Count - 2; nutNr >= 0; nutNr--)
                     {
-                        if (nut.NutColor != nutColor) { break; }
+                        if (Nuts[nutNr].NutColor.Name != nutColor.Name) { break; }
                         else { amount++; }
                     }
                     return amount;

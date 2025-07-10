@@ -6,8 +6,8 @@ namespace NutSort.Models
     {
         public Move() { }
 
-        public byte FromStackNr { get; set; } = 0;
-        public byte ToStackNr { get; set; } = 0;
+        public int FromStackNr { get; set; } = -1;
+        public int ToStackNr { get; set; } = -1;
 
         public void Execute(Boardstate boardstate)
         {
@@ -22,6 +22,23 @@ namespace NutSort.Models
                     fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);
                 }
             }
+        }
+
+        public bool IsPossibleAndReasonable(Boardstate boardstate)
+        {
+            Stack fromStack = boardstate.Stacks[FromStackNr];
+            Stack toStack = boardstate.Stacks[ToStackNr];
+            return (toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
+                        FromStackNr != ToStackNr && !toStack.IsFull && !fromStack.IsFinished &&
+                        (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty);
+        }
+
+        public bool IsPossible(Boardstate boardstate)
+        {
+            Stack fromStack = boardstate.Stacks[FromStackNr];
+            Stack toStack = boardstate.Stacks[ToStackNr];
+            return (toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
+                        FromStackNr != ToStackNr && !toStack.IsFull;
         }
 
         public override string ToString()

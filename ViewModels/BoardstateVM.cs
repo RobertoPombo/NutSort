@@ -15,6 +15,7 @@ namespace NutSort.ViewModels
             if (boards.Count > 0) { Board = boards[0]; }
             InitialBoardstate();
             PlayBoardCmd = new UICmd((o) => PlayBoard());
+            SelectStackCmd = new UICmd((o) => SelectStack(o));
             SolveBoardCmd = new UICmd((o) => SolveBoard());
             LoadBoardCmd = new UICmd((o) => LoadBoard());
             EditBoardCmd = new UICmd((o) => EditBoard());
@@ -46,6 +47,7 @@ namespace NutSort.ViewModels
         private int animationDelayMs = 1000;
         private bool animationIsReversed = false;
         private bool animationIsSleeping = false;
+        private Move? move = null;
 
         public ObservableCollection<Board> Boards
         {
@@ -335,11 +337,70 @@ namespace NutSort.ViewModels
 
         private void PlayBoard()
         {
-            board?.StopSolving();
+            if (board is not null && boardstate is not null)
+            {
+                move = new();
+                board.StopSolving();
+                solution = new(boardstate, board);
+                board.Solutions.Insert(0, solution);
+                solution.SolveStartTime = DateTime.Now;
+                solution.Boardstates[0].NextMoveIndex = 0;
+                SolutionNr = -1;
+                SolutionNr = 0;
+            }
+        }
+
+        private void SelectStack(object obj)
+        {
+            if (obj.GetType() == typeof(Stack) && boardstate is not null && solution is not null && move is not null)
+            {
+                Stack stack = (Stack)obj;
+                int stackNr = boardstate.Stacks.IndexOf(stack);
+                if (move.FromStackNr < 0 && boardstate.Stacks[stackNr].TopNut is not null)
+                {
+                    move.FromStackNr = stackNr;
+                    for (int nutNr = 1; nutNr < boardstate.Stacks[stackNr].TopNutCount + 1; nutNr++)
+                    {
+                        NutColor color = boardstate.Stacks[stackNr].Nuts[^nutNr].NutColor;
+                        boardstate.Stacks[stackNr].Nuts[^nutNr].NutColor = new((byte)Math.Floor((double)byte.MaxValue / 2)) { Name = color.Name, Red = color.Red, Green = color.Green, Blue = color.Blue };
+                    }
+                }
+                else if (move.FromStackNr >= 0 && boardstate.Stacks[move.FromStackNr].TopNut is not null)
+                {
+                    if (stackNr == move.FromStackNr)
+                    {
+                        for (int nutNr = 1; nutNr < boardstate.Stacks[stackNr].TopNutCount + 1; nutNr++)
+                        {
+                            NutColor color = boardstate.Stacks[stackNr].Nuts[^nutNr].NutColor;
+                            boardstate.Stacks[stackNr].Nuts[^nutNr].NutColor = NutColor.GetByName(color.Name) ?? new() { Name = color.Name, Red = color.Red, Green = color.Green, Blue = color.Blue };
+                        }
+                        move = new();
+                    }
+                    else
+                    {
+                        move.ToStackNr = stackNr;
+                        if (move.IsPossible(boardstate))
+                        {
+                            for (int nutNr = 1; nutNr < boardstate.Stacks[move.FromStackNr].TopNutCount + 1; nutNr++)
+                            {
+                                NutColor color = boardstate.Stacks[move.FromStackNr].Nuts[^nutNr].NutColor;
+                                boardstate.Stacks[move.FromStackNr].Nuts[^nutNr].NutColor = NutColor.GetByName(color.Name) ?? new() { Name = color.Name, Red = color.Red, Green = color.Green, Blue = color.Blue };
+                            }
+                            boardstate = new(boardstate.Stacks, boardstate.Solution);
+                            solution.Boardstates.Add(boardstate);
+                            move.Execute(boardstate);
+                            move = new();
+                            LastStep();
+                        }
+                    }
+                }
+                LoadBoardstate();
+            }
         }
 
         private void SolveBoard()
         {
+            move = null;
             board?.Solve();
         }
 
@@ -488,6 +549,7 @@ namespace NutSort.ViewModels
         }
 
         public UICmd PlayBoardCmd { get; set; }
+        public UICmd SelectStackCmd { get; set; }
         public UICmd SolveBoardCmd { get; set; }
         public UICmd LoadBoardCmd { get; set; }
         public UICmd EditBoardCmd { get; set; }

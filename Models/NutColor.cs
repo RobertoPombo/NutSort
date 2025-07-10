@@ -12,13 +12,17 @@ namespace NutSort.Models
         public static List<NutColor> List { get; set; } = [];
 
         public NutColor() { }
+        public NutColor(byte _alpha) { alpha = _alpha; }
 
         public string Name { get; set; } = string.Empty;
         public byte Red { get; set; } = byte.MinValue;
         public byte Green { get; set; } = byte.MinValue;
         public byte Blue { get; set; } = byte.MinValue;
 
-        [JsonIgnore] public Brush Preview { get { return new SolidColorBrush(System.Windows.Media.Color.FromRgb(Red, Green, Blue)); } }
+        private byte alpha = byte.MaxValue;
+        [JsonIgnore] public byte Alpha { get { return alpha; } }
+
+        [JsonIgnore] public Brush Preview { get { return new SolidColorBrush(Color.FromArgb(Alpha, Red, Green, Blue)); } }
 
         public static NutColor? GetByName(string name)
         {

@@ -57,16 +57,10 @@ namespace NutSort.Models
             PossibleMoves = [];
             for (byte fromStackNr = 0; fromStackNr < Stacks.Count; fromStackNr++)
             {
-                Stack fromStack = Stacks[fromStackNr];
                 for (byte toStackNr = 0; toStackNr < Stacks.Count; toStackNr++)
                 {
-                    Stack toStack = Stacks[toStackNr];
-                    if ((toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
-                        fromStackNr != toStackNr && !toStack.IsFull && !fromStack.IsFinished &&
-                        (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty))
-                    {
-                        PossibleMoves.Add(new() { FromStackNr = fromStackNr, ToStackNr = toStackNr });
-                    }
+                    Move move = new() { FromStackNr = fromStackNr, ToStackNr = toStackNr };
+                    if (move.IsPossibleAndReasonable(this)) { PossibleMoves.Add(move); }
                 }
             }
             PrioritizeMoves();
