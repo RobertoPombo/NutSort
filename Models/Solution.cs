@@ -101,10 +101,8 @@ namespace NutSort.Models
                 Boardstate state = Boardstates[^1];
                 if (IsFinished)
                 {
-                    if (Board.ShortestSolution is null || Boardstates.Count < Board.ShortestSolution.Boardstates.Count)
-                    {
-                        Board.ShortestSolution = this;
-                    }
+                    if (Board.ShortestSolution is null || Boardstates.Count < Board.ShortestSolution.Boardstates.Count) { Board.ShortestSolution = this; }
+                    if (Board.MostObviousSolution is null || IterationCount < Board.MostObviousSolution.IterationCount) { Board.MostObviousSolution = this; }
                     Solution newSolution = new(Boardstates, IterationCount, TotalProcessDurationSec);
                     Board.Solutions.Add(newSolution);
                     newSolution.TryExcecuteNextMove(newSolution.Boardstates[^1]);

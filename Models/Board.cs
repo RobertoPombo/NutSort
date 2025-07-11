@@ -26,7 +26,9 @@ namespace NutSort.Models
 
         public Solution? InitialBoardstate { get; set; } = null;
         public List<Solution> Solutions { get; set; } = [];
+        public Solution? PlayerSolution { get; set; } = null;
         public Solution? ShortestSolution { get; set; } = null;
+        public Solution? MostObviousSolution { get; set; } = null;
 
         private string levelName = "#";
         public string LevelName
@@ -130,7 +132,7 @@ namespace NutSort.Models
                 InitialBoardstate.Boardstates[0].UpdatePossibleMoves();
                 for (int moveNr = 0; moveNr < InitialBoardstate.Boardstates[0].PossibleMoves.Count; moveNr++)
                 {
-                    Solutions.Add(new (InitialBoardstate.Boardstates[0], this));
+                    Solutions.Add(new(InitialBoardstate.Boardstates[0], this) { IterationCount = moveNr });
                     InitialBoardstate.Boardstates[0].NextMoveIndex++;
                 }
                 for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
@@ -183,6 +185,7 @@ namespace NutSort.Models
 
         public void CreateInitialBoardstate(string? id = null)
         {
+            ResetSolutions();
             string[] ids = id?.Split('|') ?? [];
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
@@ -222,7 +225,7 @@ namespace NutSort.Models
             }
             //verbleibende zunächst leere Stacks hinzufügen
             for (int _stackNr = stacks.Count; _stackNr < stackCount; _stackNr++) { stacks.Add(new()); }
-            //Stacks mit zufälligen Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
+            //Stacks mit Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
             while (nutColors.Keys.Count < ColorCount)
             {
                 foreach (NutColor nutColor in NutColor.List)
@@ -232,14 +235,15 @@ namespace NutSort.Models
             }
             foreach (NutColor nutColor in nutColors.Keys)
             {
+                int stackNr = 0;
                 while (nutColors[nutColor] < NutSameColorCount)
                 {
-                    int stackNr = random.Next(0, stacks.Count);
                     if (stacks[stackNr].Nuts.Count < StackHeight)
                     {
                         stacks[stackNr].Nuts.Add(new(nutColor));
                         nutColors[nutColor]++;
                     }
+                    else { stackNr++; }
                 }
             }
             InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));

@@ -9,12 +9,15 @@
     <Grid HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <Grid Grid.Row="0" Margin="5,20" HorizontalAlignment="Center">
+
+        <Grid Grid.Row="0" Margin="5,20,5,0" HorizontalAlignment="Center" Visibility="{Binding VisibilityTopMenu}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -60,8 +63,14 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-            <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" x:Name="StackPanelDataContext">
+        <Button Grid.Row="1" Command="{Binding ShowHideTopMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="25,5,25,0">
+            <Button.LayoutTransform>
+                <RotateTransform Angle="0"/>
+            </Button.LayoutTransform>
+        </Button>
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"  HorizontalAlignment="Center">
+            <StackPanel Orientation="Vertical" Margin="5" VerticalAlignment="Center" x:Name="StackPanelDataContext">
                 <ItemsControl ItemsSource="{Binding BoardstateRows}" Background="Transparent" HorizontalAlignment="Center" Width="Auto">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -99,7 +108,7 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Grid>
-                                                                <Label Background="{DynamicResource colorForeground_Transp80}" Width="10" Height="20"/>
+                                                                <Label Background="{DynamicResource colorForeground_Transp60}" Width="10" Height="20"/>
                                                             </Grid>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
@@ -139,15 +148,33 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Left" Width="175" Margin="25,5,10,5"/>
-                    <Button Grid.Row="0" Grid.Column="1" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Right" Width="175" Margin="10,5,25,5"/>
+                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Left" Width="100" Margin="25,5,5,5"/>
+                    <Button Grid.Row="0" Grid.Column="1" Command="{Binding PreviousLevelCmd}" Content="|&lt;" Style="{StaticResource ButtonStyle}" Margin="5"/>
+                    <Label Grid.Row="0" Grid.Column="2" Content="{Binding Board.LevelName}" Style="{StaticResource LabelStyle}" Margin="0"/>
+                    <Button Grid.Row="0" Grid.Column="3" Command="{Binding NextLevelCmd}" Content=">|" Style="{StaticResource ButtonStyle}" Margin="5"/>
+                    <Button Grid.Row="0" Grid.Column="4" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Right" Width="100" Margin="5,5,25,5"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Grid.Row="2" Margin="5" HorizontalAlignment="Center">
+        <Button Grid.Row="3" Command="{Binding ShowHideBottomMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="25,0,25,2">
+            <Button.LayoutTransform>
+                <RotateTransform Angle="180"/>
+            </Button.LayoutTransform>
+        </Button>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5" Height="30" Visibility="{Binding VisibilityBottomMenu}">
+            <Button Command="{Binding InitialBoardstateCmd}" Content="Initial board" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+            <Button Command="{Binding ShortestSolutionCmd}" Content="Fastest solution" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+            <Button Command="{Binding MostObviousSolutionCmd}" Content="Most obvious solution" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="5" Margin="5" HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -165,32 +192,29 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Solutions:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
-            <Button Grid.Row="0" Grid.Column="1" Command="{Binding InitialBoardstateCmd}" Content="Start" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="0" Grid.Column="2" Command="{Binding ShortestSolutionCmd}" Content="Best" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="0" Grid.Column="3" Command="{Binding PreviousSolutionCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="0" Grid.Column="4" Command="{Binding NextSolutionCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding SolutionNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <Label Grid.Row="0" Grid.Column="6" Content="{Binding SolutionCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Left" Margin="0"/>
+            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding SolutionCountStr}" Style="{StaticResource LabelStyle}" Margin="5,0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="1" Grid.Column="4" Command="{Binding PreviousSolutionCmd}" Content="|&lt;" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding SolutionNr}" Style="{StaticResource TextBoxStyle}" Margin="5" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="1" Grid.Column="6" Command="{Binding NextSolutionCmd}" Content=">|" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="Steps:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding FirstStepCmd}" Content="First" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="1" Grid.Column="2" Command="{Binding LastStepCmd}" Content="Last" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="1" Grid.Column="3" Command="{Binding PreviousStepCmd}" Content="Previous" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="1" Grid.Column="4" Command="{Binding NextStepCmd}" Content="Next" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding StepNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <Label Grid.Row="1" Grid.Column="6" Content="{Binding StepCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Left" Margin="0"/>
+            <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding StepCountStr}" Style="{StaticResource LabelStyle}" Margin="5,0"/>
+            <Button Grid.Row="2" Grid.Column="3" Command="{Binding FirstStepCmd}" Content="|&lt;&lt;" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Button Grid.Row="2" Grid.Column="4" Command="{Binding PreviousStepCmd}" Content="|&lt;" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding StepNr}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
+            <Button Grid.Row="2" Grid.Column="6" Command="{Binding NextStepCmd}" Content=">|" Style="{StaticResource ButtonStyle}" Margin="0"/>
+            <Button Grid.Row="2" Grid.Column="7" Command="{Binding LastStepCmd}" Content=">>|" Style="{StaticResource ButtonStyle}" Margin="0"/>
 
-            <Label Grid.Row="4" Grid.Column="0" Content="Animation:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
-            <Button Grid.Row="4" Grid.Column="1" Command="{Binding PlayAnimationCmd}" Content="Play" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="4" Grid.Column="2" Command="{Binding StopAnimationCmd}" Content="Stop" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="4" Grid.Column="3" Command="{Binding ReverseAnimationCmd}" Content="Reverse" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <Button Grid.Row="4" Grid.Column="4" Command="{Binding ResetAnimationCmd}" Content="Reset" Style="{StaticResource ButtonStyle}" Margin="0"/>
-            <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding AnimationDelayMs}" Style="{StaticResource TextBoxStyle}" Margin="5"/>
-            <Label Grid.Row="4" Grid.Column="6" Content="ms" Style="{StaticResource LabelStyle}" Margin="0"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Animation" Style="{StaticResource LabelStyle}" Margin="5,0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding AnimationDelayMs}" Style="{StaticResource TextBoxStyle}" Margin="5,5,1,5" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Label Grid.Row="3" Grid.Column="2" Content="ms" Style="{StaticResource LabelStyle}" Margin="0,0,5,0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="3" Grid.Column="3" Command="{Binding ResetAnimationCmd}" Content="|&lt;&lt;" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="3" Grid.Column="4" Command="{Binding ReverseAnimationCmd}" Content="&lt;" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="3" Grid.Column="5" Command="{Binding StopAnimationCmd}" Content="||" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="3" Grid.Column="6" Command="{Binding PlayAnimationCmd}" Content=">" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
+            <Button Grid.Row="3" Grid.Column="7" Command="{Binding LastStepCmd}" Content=">>|" Style="{StaticResource ButtonStyle}" Margin="0" Visibility="{Binding VisibilityBottomMenu}"/>
         </Grid>
-        
-        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0" HorizontalAlignment="Center">
+
+        <StackPanel Grid.Row="6" Orientation="Vertical" Margin="0" HorizontalAlignment="Center" Visibility="{Binding VisibilityBottomMenu}">
             <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Center">
                 <Label Grid.Row="0" Grid.Column="0" Content="Iterations:" Style="{StaticResource LabelStyle}" Margin="5,0"/>
                 <Label Grid.Row="0" Grid.Column="1" Content="{Binding IterationCount}" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" Margin="0"/>
