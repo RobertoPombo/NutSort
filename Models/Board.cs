@@ -153,6 +153,7 @@ namespace NutSort.Models
             }
             Solutions = [];
             ShortestSolution = null;
+            MostObviousSolution = null;
         }
 
         public void StopSolving()

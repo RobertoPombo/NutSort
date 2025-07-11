@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="5,0,5,0" HorizontalAlignment="Center" Visibility="{Binding VisibilityTopMenu}">
+        <Grid Grid.Row="0" Margin="5,0,5,0" HorizontalAlignment="Center" Visibility="{Binding VisibilityTopMenu}" x:Name="MainGridDataContext">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -69,8 +69,25 @@
             </Button.LayoutTransform>
         </Button>
 
-        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"  HorizontalAlignment="Center">
-            <StackPanel Orientation="Vertical" Margin="5" VerticalAlignment="Center" x:Name="StackPanelDataContext">
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Center">
+            <StackPanel Orientation="Vertical" Margin="5" VerticalAlignment="Center">
+                <ItemsControl ItemsSource="{Binding NutColors}" Margin="5,0" Visibility="{Binding VisibilityNutColorMenu}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Label Background="{Binding Preview}" Width="22" Height="20" Margin="0"/>
+                                <Button Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutColorCmd}" CommandParameter="{Binding}"
+                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
                 <ItemsControl ItemsSource="{Binding BoardstateRows}" Background="Transparent" HorizontalAlignment="Center" Width="Auto">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -127,12 +144,15 @@
                                                         <DataTemplate>
                                                             <Grid>
                                                                 <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
+                                                                <Button Grid.Column="0" Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutCmd}" CommandParameter="{Binding}"
+                                                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"/>
                                                             </Grid>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
-                                                <Button Grid.Column="0" Command="{Binding ElementName=StackPanelDataContext, Path=DataContext.SelectStackCmd}" CommandParameter="{Binding}"
-                                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"/>
+                                                <Button Grid.Column="0" Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectStackCmd}" CommandParameter="{Binding}"
+                                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"
+                                                        IsHitTestVisible="{Binding ElementName=MainGridDataContext, Path=DataContext.IsPlaying}"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
