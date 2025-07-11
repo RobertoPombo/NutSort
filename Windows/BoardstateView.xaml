@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="5,20,5,0" HorizontalAlignment="Center" Visibility="{Binding VisibilityTopMenu}">
+        <Grid Grid.Row="0" Margin="5,0,5,0" HorizontalAlignment="Center" Visibility="{Binding VisibilityTopMenu}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -63,7 +63,7 @@
             </StackPanel>
         </Grid>
 
-        <Button Grid.Row="1" Command="{Binding ShowHideTopMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="25,5,25,0">
+        <Button Grid.Row="1" Command="{Binding ShowHideTopMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="5,5,5,0">
             <Button.LayoutTransform>
                 <RotateTransform Angle="0"/>
             </Button.LayoutTransform>
@@ -153,16 +153,16 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Left" Width="100" Margin="25,5,5,5"/>
+                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding PlayBoardCmd}" Content="Play" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Left" Width="100" Margin="5"/>
                     <Button Grid.Row="0" Grid.Column="1" Command="{Binding PreviousLevelCmd}" Content="|&lt;" Style="{StaticResource ButtonStyle}" Margin="5"/>
                     <Label Grid.Row="0" Grid.Column="2" Content="{Binding Board.LevelName}" Style="{StaticResource LabelStyle}" Margin="0"/>
                     <Button Grid.Row="0" Grid.Column="3" Command="{Binding NextLevelCmd}" Content=">|" Style="{StaticResource ButtonStyle}" Margin="5"/>
-                    <Button Grid.Row="0" Grid.Column="4" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Right" Width="100" Margin="5,5,25,5"/>
+                    <Button Grid.Row="0" Grid.Column="4" Command="{Binding SolveBoardCmd}" Content="Solve" Style="{StaticResource ButtonStyle2}" HorizontalAlignment="Right" Width="100" Margin="5"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
 
-        <Button Grid.Row="3" Command="{Binding ShowHideBottomMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="25,0,25,2">
+        <Button Grid.Row="3" Command="{Binding ShowHideBottomMenuCmd}" Content="^" Style="{StaticResource ButtonStyle}" Margin="5,0,5,2">
             <Button.LayoutTransform>
                 <RotateTransform Angle="180"/>
             </Button.LayoutTransform>

@@ -23,7 +23,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <UserControl Grid.Row="1" Content="{Binding BoardstateVM}"/>
+        <UserControl Grid.Row="1" Content="{Binding BoardstateVM}" Margin="20"/>
         <Canvas Grid.Row="2" Width="Auto" Height="1" Background="{DynamicResource colorDetail1}" Margin="10"/>
         <Label Grid.Row="3" Content="{Binding CurrentLogText}" Style="{StaticResource LabelStyle}" Margin="15,5" Padding="0" Height="Auto"/>
     </Grid>

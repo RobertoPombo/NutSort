@@ -42,6 +42,7 @@ namespace NutSort.ViewModels
             NextLevelCmd = new UICmd((o) => NextLevel());
             ShowHideTopMenuCmd = new UICmd((o) => ShowHideTopMenu());
             ShowHideBottomMenuCmd = new UICmd((o) => ShowHideBottomMenu());
+            PlayBoard();
         }
 
         private ObservableCollection<Board> boards = [];
