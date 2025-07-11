@@ -168,10 +168,11 @@
             </Button.LayoutTransform>
         </Button>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5" Height="30" Visibility="{Binding VisibilityBottomMenu}">
-            <Button Command="{Binding InitialBoardstateCmd}" Content="Initial board" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
-            <Button Command="{Binding ShortestSolutionCmd}" Content="Fastest solution" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
-            <Button Command="{Binding MostObviousSolutionCmd}" Content="Most obvious solution" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0" Height="30" Visibility="{Binding VisibilityBottomMenu}">
+            <Button Command="{Binding InitialBoardstateCmd}" Content="None" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+            <Button Command="{Binding PlayerSolutionCmd}" Content="From player" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+            <Button Command="{Binding ShortestSolutionCmd}" Content="Fastest" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
+            <Button Command="{Binding MostObviousSolutionCmd}" Content="Most obvious" Style="{StaticResource ButtonStyle}" Margin="2,0"/>
         </StackPanel>
 
         <Grid Grid.Row="5" Margin="5" HorizontalAlignment="Center">

@@ -27,6 +27,7 @@ namespace NutSort.ViewModels
             PreviousSolutionCmd = new UICmd((o) => PreviousSolution());
             NextSolutionCmd = new UICmd((o) => NextSolution());
             InitialBoardstateCmd = new UICmd((o) => InitialBoardstate());
+            PlayerSolutionCmd = new UICmd((o) => PlayerSolution());
             ShortestSolutionCmd = new UICmd((o) => ShortestSolution());
             MostObviousSolutionCmd = new UICmd((o) => MostObviousSolution());
             PreviousStepCmd = new UICmd((o) => PreviousStep());
@@ -375,13 +376,16 @@ namespace NutSort.ViewModels
             {
                 move = new();
                 board.StopSolving();
-                if (SolutionNr == 0 && board.InitialBoardstate.Boardstates.Count > 0)
+                if (board.PlayerSolution != solution || board.PlayerSolution is null)
                 {
-                    board.PlayerSolution = new(board.InitialBoardstate.Boardstates[0], board) { SolveStartTime = DateTime.Now };
+                    if (SolutionNr == 0 && board.InitialBoardstate.Boardstates.Count > 0)
+                    {
+                        board.PlayerSolution = new(board.InitialBoardstate.Boardstates[0], board) { SolveStartTime = DateTime.Now };
+                    }
+                    else { board.PlayerSolution = new(boardstate, board) { SolveStartTime = DateTime.Now }; }
+                    board.PlayerSolution.Boardstates[0].NextMoveIndex = 0;
+                    Solution = board.PlayerSolution;
                 }
-                else { board.PlayerSolution = new(boardstate, board) { SolveStartTime = DateTime.Now }; }
-                board.PlayerSolution.Boardstates[0].NextMoveIndex = 0;
-                Solution = board.PlayerSolution;
             }
         }
 
@@ -528,6 +532,13 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(StepNr));
         }
 
+        private void PlayerSolution()
+        {
+            Solution = Board?.PlayerSolution ?? null;
+            LastStep();
+            RaisePropertyChanged(nameof(SolutionNr));
+        }
+
         private void ShortestSolution()
         {
             Solution = Board?.ShortestSolution ?? null;
@@ -652,6 +663,7 @@ namespace NutSort.ViewModels
         public UICmd PreviousSolutionCmd { get; set; }
         public UICmd NextSolutionCmd { get; set; }
         public UICmd InitialBoardstateCmd { get; set; }
+        public UICmd PlayerSolutionCmd { get; set; }
         public UICmd ShortestSolutionCmd { get; set; }
         public UICmd MostObviousSolutionCmd { get; set; }
         public UICmd PreviousStepCmd { get; set; }
