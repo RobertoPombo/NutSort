@@ -179,6 +179,17 @@ namespace NutSort.Models
 
         public static void SaveJson()
         {
+            for (int boardNr1 = 0; boardNr1 < List.Count - 1; boardNr1++)
+            {
+                for (int boardNr2 = boardNr1 + 1; boardNr2 < List.Count; boardNr2++)
+                {
+                    if (List[boardNr1].LevelName.Length > 1 && List[boardNr2].LevelName.Length > 1 &&
+                        int.TryParse(List[boardNr1].LevelName[1..], out int levelNr1) && int.TryParse(List[boardNr2].LevelName[1..], out int levelNr2) && levelNr1 > levelNr2)
+                    {
+                        (List[boardNr1], List[boardNr2]) = (List[boardNr2], List[boardNr1]);
+                    }
+                }
+            }
             string text = JsonConvert.SerializeObject(List, Formatting.Indented, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
             File.WriteAllText(path, text, Encoding.Unicode);
             GlobalValues.CurrentLogText = "Boards saved.";
