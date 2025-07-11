@@ -366,7 +366,7 @@ namespace NutSort.ViewModels
             get { return VisibilityNutColorMenu == Visibility.Visible; }
             set
             {
-                if (!value) { VisibilityNutColorMenu = Visibility.Hidden; selectedNut = null; }
+                if (!value) { VisibilityNutColorMenu = Visibility.Hidden; selectedNut = null; ResetNutColors(); }
                 else { IsPlaying = false; }
                 RaisePropertyChanged(nameof(VisibilityNutColorMenu));
             }
@@ -409,8 +409,9 @@ namespace NutSort.ViewModels
 
         private void PlayBoard()
         {
-            if (board is not null && boardstate is not null && board.InitialBoardstate is not null)
+            if (board is not null && board.InitialBoardstate is not null)
             {
+                boardstate ??= board.InitialBoardstate.Boardstates[0];
                 IsPlaying = true;
                 move = new();
                 board.StopSolving();
@@ -593,19 +594,24 @@ namespace NutSort.ViewModels
                 }
                 VisibilityNutColorMenu = Visibility.Hidden;
                 RaisePropertyChanged(nameof(VisibilityNutColorMenu));
-                foreach (Stack stack in boardstate.Stacks)
-                {
-                    foreach (Nut nut in stack.Nuts)
-                    {
-                        if (nut.Id != selectedNut.Id)
-                        {
-                            NutColor color = nut.NutColor;
-                            nut.NutColor = NutColor.GetByName(color.Name) ?? new() { Name = color.Name, Red = color.Red, Green = color.Green, Blue = color.Blue };
-                        }
-                    }
-                }
+                ResetNutColors();
                 selectedNut = null;
                 LoadBoardstate();
+            }
+        }
+
+        private void ResetNutColors()
+        {
+            foreach (Stack stack in boardstate?.Stacks ?? [])
+            {
+                foreach (Nut nut in stack.Nuts)
+                {
+                    if (nut.Id != (selectedNut?.Id ?? -1))
+                    {
+                        NutColor color = nut.NutColor;
+                        nut.NutColor = NutColor.GetByName(color.Name) ?? new() { Name = color.Name, Red = color.Red, Green = color.Green, Blue = color.Blue };
+                    }
+                }
             }
         }
 
