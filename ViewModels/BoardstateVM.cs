@@ -622,6 +622,7 @@ namespace NutSort.ViewModels
                 IsEditableBoard = false;
                 board.ResetSolutions();
                 board.CreateInitialBoardstate();
+                board.PlayerSolution = null;
                 InitialBoardstate();
                 FirstStep();
                 LoadBoardstate();
