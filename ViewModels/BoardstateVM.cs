@@ -621,7 +621,8 @@ namespace NutSort.ViewModels
             {
                 IsEditableBoard = false;
                 board.ResetSolutions();
-                board.CreateInitialBoardstate();
+                board.CreateInitialBoardstate(nameof(Boardstate));
+                board.RandomizeInitialBoardstate();
                 board.PlayerSolution = null;
                 InitialBoardstate();
                 FirstStep();
@@ -633,9 +634,8 @@ namespace NutSort.ViewModels
         {
             IsEditableBoard = false;
             board ??= new();
-            string newInitialBoardstate = boardstate?.Id ?? string.Empty;
             Board = new(board.StackCount, board.StackHeight, board.NutSameColorCount, board.ColorCount, board.MaxColumnsCount);
-            Board.CreateInitialBoardstate(newInitialBoardstate);
+            Board.CreateInitialBoardstate();
             Boards.Add(board);
             InitialBoardstate();
             FirstStep();

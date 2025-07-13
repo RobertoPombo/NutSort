@@ -198,9 +198,9 @@ namespace NutSort.Models
         public void CreateInitialBoardstate(string? id = null)
         {
             ResetSolutions();
-            string[] ids = id?.Split('|') ?? [];
             InitialBoardstate = new() { Board = this };
             List<Stack> stacks = [];
+            string[] ids = id?.Split('|') ?? [];
             List<Nut> nuts = [];
             int slotsCount = 0;
             //id soweit möglich aufschlüsseln und auf die Stacks verteilen
@@ -217,6 +217,21 @@ namespace NutSort.Models
                     slotsCount = 0;
                 }
             }
+            //verbleibende zunächst leere Stacks hinzufügen
+            for (int _stackNr = stacks.Count; _stackNr < stackCount; _stackNr++) { stacks.Add(new()); }
+            InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
+            string emptyId = string.Empty;
+            for (int stackNr = 0; stackNr < StackCount; stackNr++) { emptyId += "#|"; }
+            int idLength = Math.Max(0, Math.Min(emptyId.Length - 1, id?.Length ?? 0));
+            if (!string.IsNullOrEmpty(id) && id[..idLength] != emptyId[..idLength])
+            {
+                FillInitialBoardstate();
+            }
+        }
+
+        public void FillInitialBoardstate()
+        {
+            List<Stack> stacks = InitialBoardstate?.Boardstates[0].Stacks ?? [];
             //Nut entfernen, falls zu viele verschiedene Farben oder zu viele Nuts der gleichen Farbe verteilt
             Dictionary<NutColor, int> nutColors = [];
             for (int _stackNr = 0; _stackNr < stacks.Count; _stackNr++)
@@ -235,8 +250,6 @@ namespace NutSort.Models
                     }
                 }
             }
-            //verbleibende zunächst leere Stacks hinzufügen
-            for (int _stackNr = stacks.Count; _stackNr < stackCount; _stackNr++) { stacks.Add(new()); }
             //Stacks mit Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
             while (nutColors.Keys.Count < ColorCount)
             {
@@ -258,11 +271,10 @@ namespace NutSort.Models
                     else { stackNr++; }
                 }
             }
-            InitialBoardstate.Boardstates.Add(new(stacks, InitialBoardstate));
-            if (string.IsNullOrEmpty(id)) { RandomizeInitialBoardstate(); }
+            InitialBoardstate?.Boardstates.Add(new(stacks, InitialBoardstate));
         }
 
-        private void RandomizeInitialBoardstate(int iterationCount = 1000)
+        public void RandomizeInitialBoardstate(int iterationCount = 1000)
         {
             if (InitialBoardstate is not null && InitialBoardstate.Boardstates.Count > 0)
             {
