@@ -87,7 +87,24 @@ namespace NutSort.ViewModels
 
         public ObservableCollection<NutColor> NutColors
         {
-            get { ObservableCollection<NutColor> list = []; foreach (NutColor nutColor in NutColor.List) { list.Add(nutColor); } return list; }
+            get
+            {
+                ObservableCollection<NutColor> list = [];
+                foreach (NutColor nutColor in NutColor.List) { list.Add(nutColor); }
+                if (board is not null && actualNutCount < NutCount)
+                {
+                    Dictionary<NutColor, int> nutColorsCount = board.ForceColorCount();
+                    for (int nutColorNr = list.Count - 1; nutColorNr >= 0; nutColorNr--)
+                    {
+                        if (nutColorsCount.TryGetValue(list[nutColorNr], out int value))
+                        {
+                            if (value >= board.NutSameColorCount) { list.RemoveAt(nutColorNr); }
+                        }
+                        else if (nutColorsCount.Count >= ColorCount) { list.RemoveAt(nutColorNr); }
+                    }
+                }
+                return list;
+            }
         }
 
         public byte StackCount
@@ -357,6 +374,20 @@ namespace NutSort.ViewModels
             }
         }
 
+        private int actualNutCount
+        {
+            get
+            {
+                if (boardstate is null) { return 0; }
+                int count = 0;
+                foreach (Stack stack in boardstate.Stacks)
+                {
+                    count += stack.Nuts.Count;
+                }
+                return count;
+            }
+        }
+
         public Visibility VisibilityTopMenu { get; set; } = Visibility.Collapsed;
         public Visibility VisibilityBottomMenu { get; set; } = Visibility.Collapsed;
         public Visibility VisibilityNutColorMenu { get; set; } = Visibility.Hidden;
@@ -494,6 +525,7 @@ namespace NutSort.ViewModels
 
         private void LoadBoard()
         {
+            foreach (Board board in Board.List) { board.StopSolving(); }
             IsEditableBoard = false;
             int levelNr = 0;
             if (board is not null) { levelNr = Board.List.IndexOf(board); }
@@ -549,53 +581,67 @@ namespace NutSort.ViewModels
 
         private void SelectNutColor(object obj)
         {
-            if (obj.GetType() == typeof(NutColor) && boardstate is not null && solution is not null && selectedNut is not null)
+            if (obj.GetType() == typeof(NutColor) && board is not null && boardstate is not null && solution is not null)
             {
                 NutColor newNutColor = (NutColor)obj;
                 int selectedNutStackNr = -1;
                 int selectedNutNr = -1;
-                for (int stackNr = 0; stackNr < boardstate.Stacks.Count; stackNr++)
+                if (selectedNut is not null)
                 {
-                    Stack stack = boardstate.Stacks[stackNr];
-                    for (int nutNr = 0; nutNr < stack.Nuts.Count; nutNr++)
+                    for (int stackNr = 0; stackNr < boardstate.Stacks.Count; stackNr++)
                     {
-                        if (stack.Nuts[nutNr].Id == selectedNut.Id)
+                        Stack stack = boardstate.Stacks[stackNr];
+                        for (int nutNr = 0; nutNr < stack.Nuts.Count; nutNr++)
                         {
-                            selectedNutStackNr = stackNr;
-                            selectedNutNr = nutNr;
-                            break;
+                            if (stack.Nuts[nutNr].Id == selectedNut.Id)
+                            {
+                                selectedNutStackNr = stackNr;
+                                selectedNutNr = nutNr;
+                                break;
+                            }
+                        }
+                        if (selectedNutStackNr > -1) { break; }
+                    }
+                    bool isChanged = false;
+                    for (int stackNr = boardstate.Stacks.Count - 1; stackNr >= 0; stackNr--)
+                    {
+                        Stack stack = boardstate.Stacks[stackNr];
+                        for (int nutNr = stack.Nuts.Count - 1; nutNr >= 0; nutNr--)
+                        {
+                            if (stack.Nuts[nutNr].NutColor.Name == newNutColor.Name)
+                            {
+                                (boardstate.Stacks[stackNr].Nuts[nutNr], boardstate.Stacks[selectedNutStackNr].Nuts[selectedNutNr]) = (boardstate.Stacks[selectedNutStackNr].Nuts[selectedNutNr], boardstate.Stacks[stackNr].Nuts[nutNr]);
+                                isChanged = true;
+                            }
                         }
                     }
-                    if (selectedNutStackNr > -1) { break; }
-                }
-                bool isChanged = false;
-                for (int stackNr = boardstate.Stacks.Count - 1; stackNr >= 0; stackNr--)
-                {
-                    Stack stack = boardstate.Stacks[stackNr];
-                    for (int nutNr = stack.Nuts.Count - 1; nutNr >= 0; nutNr--)
+                    if (!isChanged)
                     {
-                        if (stack.Nuts[nutNr].NutColor.Name == newNutColor.Name)
+                        string selectedNutColorName = selectedNut.NutColor.Name;
+                        foreach (Stack stack in boardstate.Stacks)
                         {
-                            (boardstate.Stacks[stackNr].Nuts[nutNr], boardstate.Stacks[selectedNutStackNr].Nuts[selectedNutNr]) = (boardstate.Stacks[selectedNutStackNr].Nuts[selectedNutNr], boardstate.Stacks[stackNr].Nuts[nutNr]);
-                            isChanged = true;
+                            foreach (Nut nut in stack.Nuts)
+                            {
+                                if (nut.NutColor.Name == selectedNutColorName) { nut.NutColor = newNutColor; }
+                            }
                         }
                     }
+                    ResetNutColors();
+                    selectedNut = null;
                 }
-                if (!isChanged)
+                else if (actualNutCount < NutCount)
                 {
-                    string selectedNutColorName = selectedNut.NutColor.Name;
-                    foreach (Stack stack in boardstate.Stacks)
-                    {
-                        foreach (Nut nut in stack.Nuts)
-                        {
-                            if (nut.NutColor.Name == selectedNutColorName) { nut.NutColor = newNutColor; }
-                        }
-                    }
+                    selectedNutStackNr++;
+                    while (selectedNutStackNr < boardstate.Stacks.Count && boardstate.Stacks[selectedNutStackNr].IsFull) { selectedNutStackNr++; }
+                    if (selectedNutStackNr < boardstate.Stacks.Count && boardstate.Stacks[selectedNutStackNr].Nuts.Count < board.StackHeight) { selectedNutNr = boardstate.Stacks[selectedNutStackNr].Nuts.Count; }
+                    if (selectedNutNr > -1) { boardstate.Stacks[selectedNutStackNr].Nuts.Add(new(newNutColor)); }
+                    RaisePropertyChanged(nameof(NutColors));
                 }
-                VisibilityNutColorMenu = Visibility.Hidden;
-                RaisePropertyChanged(nameof(VisibilityNutColorMenu));
-                ResetNutColors();
-                selectedNut = null;
+                if (actualNutCount >= NutCount)
+                {
+                    VisibilityNutColorMenu = Visibility.Hidden;
+                    RaisePropertyChanged(nameof(VisibilityNutColorMenu));
+                }
                 LoadBoardstate();
             }
         }
@@ -632,7 +678,6 @@ namespace NutSort.ViewModels
 
         private void CreateNewBoard()
         {
-            IsEditableBoard = false;
             board ??= new();
             Board = new(board.StackCount, board.StackHeight, board.NutSameColorCount, board.ColorCount, board.MaxColumnsCount);
             Board.CreateInitialBoardstate();
@@ -640,6 +685,10 @@ namespace NutSort.ViewModels
             InitialBoardstate();
             FirstStep();
             LoadBoardstate();
+            IsEditableBoard = true;
+            VisibilityNutColorMenu = Visibility.Visible;
+            RaisePropertyChanged(nameof(VisibilityNutColorMenu));
+            RaisePropertyChanged(nameof(NutColors));
         }
 
         private void DeleteBoard()

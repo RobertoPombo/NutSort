@@ -231,8 +231,36 @@ namespace NutSort.Models
 
         public void FillInitialBoardstate()
         {
+            //Stacks mit Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
+            Dictionary<NutColor, int> nutColorsCount = ForceColorCount();
             List<Stack> stacks = InitialBoardstate?.Boardstates[0].Stacks ?? [];
+            while (nutColorsCount.Keys.Count < ColorCount)
+            {
+                foreach (NutColor nutColor in NutColor.List)
+                {
+                    if (!nutColorsCount.ContainsKey(nutColor)) { nutColorsCount[nutColor] = 0; break; }
+                }
+            }
+            foreach (NutColor nutColor in nutColorsCount.Keys)
+            {
+                int stackNr = 0;
+                while (nutColorsCount[nutColor] < NutSameColorCount)
+                {
+                    if (stacks[stackNr].Nuts.Count < StackHeight)
+                    {
+                        stacks[stackNr].Nuts.Add(new(nutColor));
+                        nutColorsCount[nutColor]++;
+                    }
+                    else { stackNr++; }
+                }
+            }
+            InitialBoardstate?.Boardstates.Add(new(stacks, InitialBoardstate));
+        }
+
+        public Dictionary<NutColor, int> ForceColorCount()
+        {
             //Nut entfernen, falls zu viele verschiedene Farben oder zu viele Nuts der gleichen Farbe verteilt
+            List<Stack> stacks = InitialBoardstate?.Boardstates[0].Stacks ?? [];
             Dictionary<NutColor, int> nutColors = [];
             for (int _stackNr = 0; _stackNr < stacks.Count; _stackNr++)
             {
@@ -250,28 +278,7 @@ namespace NutSort.Models
                     }
                 }
             }
-            //Stacks mit Nuts aufstocken bis korrekte Anzahl an verschiedener Farben und Nuts gleicher Farben erreicht ist
-            while (nutColors.Keys.Count < ColorCount)
-            {
-                foreach (NutColor nutColor in NutColor.List)
-                {
-                    if (!nutColors.ContainsKey(nutColor)) { nutColors[nutColor] = 0; break; }
-                }
-            }
-            foreach (NutColor nutColor in nutColors.Keys)
-            {
-                int stackNr = 0;
-                while (nutColors[nutColor] < NutSameColorCount)
-                {
-                    if (stacks[stackNr].Nuts.Count < StackHeight)
-                    {
-                        stacks[stackNr].Nuts.Add(new(nutColor));
-                        nutColors[nutColor]++;
-                    }
-                    else { stackNr++; }
-                }
-            }
-            InitialBoardstate?.Boardstates.Add(new(stacks, InitialBoardstate));
+            return nutColors;
         }
 
         public void RandomizeInitialBoardstate(int iterationCount = 1000)
