@@ -76,6 +76,13 @@ namespace NutSort.ViewModels
                 InitialBoardstate();
                 FirstStep();
                 LoadBoardstate();
+                if (actualNutCount < NutCount)
+                {
+                    IsEditableBoard = false;
+                    VisibilityNutColorMenu = Visibility.Visible;
+                    RaisePropertyChanged(nameof(VisibilityNutColorMenu));
+                    RaisePropertyChanged(nameof(NutColors));
+                }
             }
         }
 
@@ -711,6 +718,13 @@ namespace NutSort.ViewModels
         {
             IsEditableBoard = false;
             Board.SaveJson();
+            if (actualNutCount < NutCount)
+            {
+                IsEditableBoard = false;
+                VisibilityNutColorMenu = Visibility.Visible;
+                RaisePropertyChanged(nameof(VisibilityNutColorMenu));
+                RaisePropertyChanged(nameof(NutColors));
+            }
         }
 
         private void PreviousSolution()
