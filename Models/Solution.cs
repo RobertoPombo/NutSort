@@ -172,7 +172,8 @@ namespace NutSort.Models
         {
             string description = Board.ToString() + " - ";
             if (Board.Solutions.Contains(this)) { description += "Solution-Nr " + Board.Solutions.IndexOf(this).ToString(); }
-            else { description += "initial boardstate"; }
+            else if (Board.PlayerSolution == this) { description += "player solution"; }
+            else if (Board.InitialBoardstate == this) { description += "initial boardstate"; }
             return description;
         }
     }

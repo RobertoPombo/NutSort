@@ -60,6 +60,7 @@ namespace NutSort.ViewModels
         private Move? move = null;
         private Nut? selectedNut = null;
         private bool isPlaying = false;
+        private bool isEditableBoard = false;
 
         public ObservableCollection<Board> Boards
         {
@@ -401,10 +402,11 @@ namespace NutSort.ViewModels
 
         public bool IsEditableBoard
         {
-            get { return VisibilityNutColorMenu == Visibility.Visible; }
+            get { return isEditableBoard; }
             set
             {
-                if (!value) { VisibilityNutColorMenu = Visibility.Hidden; selectedNut = null; ResetNutColors(); }
+                isEditableBoard = value;
+                if (!isEditableBoard) { VisibilityNutColorMenu = Visibility.Hidden; selectedNut = null; ResetNutColors(); }
                 else { IsPlaying = false; }
                 RaisePropertyChanged(nameof(VisibilityNutColorMenu));
             }
@@ -445,15 +447,16 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(BoardstateRows));
         }
 
-        private void PlayBoard()
+        private void PlayBoard(bool isManualLevelChange = false)
         {
+            IsEditableBoard = false;
             if (board is not null && board.InitialBoardstate is not null)
             {
                 boardstate ??= board.InitialBoardstate.Boardstates[0];
                 IsPlaying = true;
                 move = new();
                 board.StopSolving();
-                if (board.PlayerSolution != solution || board.PlayerSolution is null)
+                if (board.PlayerSolution is null || (!isManualLevelChange && solution != board.PlayerSolution))
                 {
                     if (SolutionNr == 0 && board.InitialBoardstate.Boardstates.Count > 0)
                     {
@@ -461,8 +464,8 @@ namespace NutSort.ViewModels
                     }
                     else { board.PlayerSolution = new(boardstate, board) { SolveStartTime = DateTime.Now }; }
                     board.PlayerSolution.Boardstates[0].NextMoveIndex = 0;
-                    Solution = board.PlayerSolution;
                 }
+                PlayerSolution();
             }
         }
 
@@ -527,6 +530,7 @@ namespace NutSort.ViewModels
         private void SolveBoard()
         {
             IsPlaying = false;
+            IsEditableBoard = false;
             board?.Solve();
         }
 
@@ -560,7 +564,7 @@ namespace NutSort.ViewModels
 
         private void SelectNut(object obj)
         {
-            if (obj.GetType() == typeof(Nut) && boardstate is not null && solution is not null)
+            if (obj.GetType() == typeof(Nut) && boardstate is not null && solution is not null && IsEditableBoard)
             {
                 selectedNut = (Nut)obj;
                 VisibilityNutColorMenu = Visibility.Visible;
@@ -852,7 +856,11 @@ namespace NutSort.ViewModels
             if (board is not null && boards.Contains(board))
             {
                 int newBoardNr = boards.IndexOf(board) - 1;
-                if (newBoardNr >= 0) { Board = boards[newBoardNr]; }
+                if (newBoardNr >= 0)
+                {
+                    Board = boards[newBoardNr];
+                    if (IsPlaying) { IsPlaying = false; PlayBoard(true); }
+                }
             }
         }
 
@@ -862,7 +870,11 @@ namespace NutSort.ViewModels
             if (board is not null && boards.Contains(board))// && board.PlayerSolution is not null && board.PlayerSolution.IsFinished)
             {
                 int newBoardNr = boards.IndexOf(board) + 1;
-                if (newBoardNr < boards.Count) { Board = boards[newBoardNr]; }
+                if (newBoardNr < boards.Count)
+                {
+                    Board = boards[newBoardNr];
+                    if (IsPlaying) { IsPlaying = false; PlayBoard(true); }
+                }
             }
         }
 
