@@ -80,9 +80,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
-                                <Label Background="{Binding Preview}" Width="22" Height="20" Margin="0"/>
-                                <Button Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutColorCmd}" CommandParameter="{Binding}"
-                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"/>
+                                <Button Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutColorCmd}"
+                                        CommandParameter="{Binding}" Background="{Binding Preview}"
+                                        Style="{StaticResource StaticButtonStyle}" Width="22" Height="20" Margin="0"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -143,9 +143,9 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Grid>
-                                                                <Label Background="{Binding NutColor.Preview}" Width="50" Height="20" Margin="0,0,0,2"/>
-                                                                <Button Grid.Column="0" Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutCmd}" CommandParameter="{Binding}"
-                                                                        Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Margin="0"/>
+                                                                <Button Style="{StaticResource StaticButtonStyle}" Background="{Binding NutColor.Preview}"
+                                                                        Command="{Binding ElementName=MainGridDataContext, Path=DataContext.SelectNutCmd}" CommandParameter="{Binding}"
+                                                                        Width="50" Height="20" Margin="0,0,0,2"/>
                                                             </Grid>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
