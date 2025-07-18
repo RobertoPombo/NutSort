@@ -124,10 +124,7 @@ namespace NutSort.ViewModels
                 {
                     board.StackCount = value;
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
-                    board.ResetSolutions();
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -141,10 +138,7 @@ namespace NutSort.ViewModels
                 {
                     board.StackHeight = value;
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
-                    board.ResetSolutions();
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -158,10 +152,7 @@ namespace NutSort.ViewModels
                 {
                     board.NutSameColorCount = (byte)Math.Round((double)value / board.ColorCount, 0);
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
-                    board.ResetSolutions();
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -174,11 +165,8 @@ namespace NutSort.ViewModels
                 if (board is not null)
                 {
                     board.ColorCount = value;
-                    board.ResetSolutions();
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -190,11 +178,8 @@ namespace NutSort.ViewModels
             {
                 if (board is not null)
                 {
-                    board.ResetSolutions();
                     board.CreateInitialBoardstate(value);
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -219,9 +204,7 @@ namespace NutSort.ViewModels
                     {
                         if (byte.TryParse(rowList[rowNr], out byte maxColumnsCount)) { board.MaxColumnsCount.Add(maxColumnsCount); }
                     }
-                    InitialBoardstate();
-                    FirstStep();
-                    LoadBoardstate();
+                    EditBoard();
                 }
             }
         }
@@ -571,6 +554,12 @@ namespace NutSort.ViewModels
                 board.PlayerSolution = null;
                 InitialBoardstate();
                 IsEditableBoard = true;
+                if (actualNutCount < NutCount)
+                {
+                    VisibilityNutColorMenu = Visibility.Visible;
+                    RaisePropertyChanged(nameof(VisibilityNutColorMenu));
+                    RaisePropertyChanged(nameof(NutColors));
+                }
             }
         }
 
@@ -736,7 +725,6 @@ namespace NutSort.ViewModels
             Board.SaveJson();
             if (actualNutCount < NutCount)
             {
-                IsEditableBoard = false;
                 VisibilityNutColorMenu = Visibility.Visible;
                 RaisePropertyChanged(nameof(VisibilityNutColorMenu));
                 RaisePropertyChanged(nameof(NutColors));
