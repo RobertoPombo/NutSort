@@ -199,14 +199,26 @@ namespace NutSort.ViewModels
             }
         }
 
-        public byte MaxColumnsCount
+        public string MaxColumnsCount
         {
-            get { return board?.MaxColumnsCount ?? byte.MinValue; }
+            get
+            {
+                string maxColumnsCount = string.Empty;
+                foreach (byte rowMaxColumnsCount in board?.MaxColumnsCount ?? []) { maxColumnsCount += rowMaxColumnsCount.ToString() + " "; }
+                if (maxColumnsCount.Length > 1) { maxColumnsCount = maxColumnsCount[..^1]; }
+                return maxColumnsCount;
+            }
             set
             {
                 if (board is not null)
                 {
-                    board.MaxColumnsCount = value;
+                    board.MaxColumnsCount = [];
+                    value = value.Replace(".", " ").Replace(",", " ").Replace(":", " ").Replace(";", " ").Replace("/", " ").Replace("\\", " ").Replace("-", " ").Replace("_", " ").Replace("  ", " ");
+                    string[] rowList = value.Split(" ");
+                    for (int rowNr = 0; rowNr < rowList.Length; rowNr++)
+                    {
+                        if (byte.TryParse(rowList[rowNr], out byte maxColumnsCount)) { board.MaxColumnsCount.Add(maxColumnsCount); }
+                    }
                     InitialBoardstate();
                     FirstStep();
                     LoadBoardstate();
@@ -436,7 +448,7 @@ namespace NutSort.ViewModels
                 for (int stackNr = 0; stackNr < boardstate.Stacks.Count; stackNr++)
                 {
                     stacks.Add(boardstate.Stacks[stackNr]);
-                    if (stacks.Count >= board?.MaxColumnsCount)
+                    if (board is not null && board.MaxColumnsCount.Count > boardstateRows.Count && stacks.Count >= board.MaxColumnsCount[boardstateRows.Count])
                     {
                         boardstateRows.Add(new() { Stacks = stacks });
                         stacks = [];

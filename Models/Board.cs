@@ -12,7 +12,7 @@ namespace NutSort.Models
         public static List<Board> List { get; set; } = [];
 
         public Board() { }
-        public Board(byte stackCount, byte stackHeight, byte nutSameColorCount, byte colorCount, byte maxColumnsCount, string? _levelName = null)
+        public Board(byte stackCount, byte stackHeight, byte nutSameColorCount, byte colorCount, List<byte> maxColumnsCount, string? _levelName = null)
         {
             StackCount = stackCount;
             StackHeight = stackHeight;
@@ -98,13 +98,16 @@ namespace NutSort.Models
             }
         }
 
-        private byte maxColumnsCount = 1;
-        public byte MaxColumnsCount
+        private List<byte> maxColumnsCount = [];
+        public List<byte> MaxColumnsCount
         {
             get { return maxColumnsCount; }
             set
             {
-                if (value < 1) { value = 1; }
+                for (int rowNr = 0; rowNr < value.Count; rowNr++)
+                {
+                    if (value[rowNr] < 1) { value[rowNr] = 1; }
+                }
                 maxColumnsCount = value;
             }
         }
