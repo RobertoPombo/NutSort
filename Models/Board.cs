@@ -142,7 +142,7 @@ namespace NutSort.Models
                 {
                     if (solutionNr < Solutions.Count) { new Thread(Solutions[solutionNr].Solve).Start(); }
                 }
-                // Thread(Solutions[0].Solve).Start();
+                //new Thread(Solutions[0].Solve).Start();
             }
         }
 

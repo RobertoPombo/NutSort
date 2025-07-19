@@ -59,6 +59,11 @@ namespace NutSort.Models
             get { return Nuts.Count == Boardstate.Solution.Board.StackHeight; }
         }
 
+        [JsonIgnore] public byte EmptySlotsCount
+        {
+            get { return (byte)(Boardstate.Solution.Board.StackHeight - Nuts.Count); }
+        }
+
         [JsonIgnore] public bool IsMonochromatic
         {
             get

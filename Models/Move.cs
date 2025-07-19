@@ -28,9 +28,15 @@ namespace NutSort.Models
         {
             Stack fromStack = boardstate.Stacks[FromStackNr];
             Stack toStack = boardstate.Stacks[ToStackNr];
+            int firstEmptyStackNr = -1;
+            for (int stackNr = 0; stackNr < boardstate.Stacks.Count; stackNr++)
+            {
+                if (boardstate.Stacks[stackNr].IsEmpty) { firstEmptyStackNr = stackNr; break; }
+            }
             return (toStack.IsEmpty || fromStack.TopNut?.NutColor.Name == toStack.TopNut?.NutColor.Name) &&
                         FromStackNr != ToStackNr && !toStack.IsFull && !fromStack.IsFinished &&
-                        (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty);
+                        (!fromStack.IsMonochromatic || fromStack.TopNutCount < fromStack.Nuts.Count || !toStack.IsEmpty) &&
+                        fromStack.TopNutCount <= toStack.EmptySlotsCount && (!toStack.IsEmpty || ToStackNr == firstEmptyStackNr);
         }
 
         public bool IsPossible(Boardstate boardstate)
@@ -43,7 +49,7 @@ namespace NutSort.Models
 
         public override string ToString()
         {
-            return "from #" + FromStackNr.ToString() + " to #" + ToStackNr.ToString();
+            return "from #" + (FromStackNr + 1).ToString() + " to #" + (ToStackNr + 1).ToString();
         }
     }
 }

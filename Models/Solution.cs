@@ -126,7 +126,7 @@ namespace NutSort.Models
 
         public void TryExcecuteNextMove(Boardstate state)
         {
-            if (state.NextMoveIndex >= state.PossibleMoves.Count || (Board.ShortestSolution is not null && Boardstates.Count >= Board.ShortestSolution.Boardstates.Count))
+            if (state.NextMoveIndex >= state.PossibleMoves.Count || (Board.ShortestSolution is not null && Boardstates.Count >= Board.ShortestSolution.Boardstates.Count - 1))
             {
                 DeleteLatestBoardstate();
                 if (Boardstates.Count < 2)

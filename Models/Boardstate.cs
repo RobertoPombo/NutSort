@@ -78,15 +78,15 @@ namespace NutSort.Models
                     Stack toStack2 = Stacks[PossibleMoves[moveNr2].ToStackNr];
                     bool isEmpty1 = toStack1.IsEmpty;
                     bool isEmpty2 = toStack2.IsEmpty;
-                    if (isEmpty1 && !isEmpty2)
+                    if (isEmpty1 && !isEmpty2)  // Keinen neuen Stack erzeugen
                     {
                         (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                     }
-                    else if (isEmpty1 == !isEmpty2)
+                    else if (isEmpty1 == isEmpty2)
                     {
                         int fromStackHeight1 = fromStack1.Nuts.Count;
                         int fromStackHeight2 = fromStack2.Nuts.Count;
-                        if (fromStackHeight1 > 1 && fromStackHeight2 == 1)
+                        if (fromStackHeight1 > 1 && fromStackHeight2 == 1)  // Einen Stack wenn möglich auflösen
                         {
                             (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                         }
@@ -94,13 +94,13 @@ namespace NutSort.Models
                         {
                             int topNutsCountByColor1 = GetTopNutsCountByColor(fromStack1.TopNut?.NutColor ?? null);
                             int topNutsCountByColor2 = GetTopNutsCountByColor(fromStack2.TopNut?.NutColor ?? null);
-                            if (topNutsCountByColor1 < topNutsCountByColor2)
+                            if (topNutsCountByColor1 < topNutsCountByColor2)    // Nuts einer Farbe mit möglichst vielen verschiebbaren Nuts gleicher Farbe verschieben
                             {
                                 (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                             }
                             else if (topNutsCountByColor1 == topNutsCountByColor2)
                             {
-                                if (fromStack1.TopNutCount < fromStack2.TopNutCount)
+                                if (fromStack1.TopNutCount < fromStack2.TopNutCount)    // Möglichst viele Nuts auf einmal verschieben
                                 {
                                     (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                                 }
@@ -108,13 +108,13 @@ namespace NutSort.Models
                                 {
                                     bool isMonochromatic1 = toStack1.IsMonochromatic;
                                     bool isMonochromatic2 = toStack2.IsMonochromatic;
-                                    if (!isMonochromatic1 && isMonochromatic2)
+                                    if (!isMonochromatic1 && isMonochromatic2)      // Möglichst auf einen einfarbigen Stack verschieben
                                     {
                                         (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                                     }
                                     else if (isMonochromatic1 == isMonochromatic2)
                                     {
-                                        if (fromStackHeight1 > fromStackHeight2)
+                                        if (fromStackHeight1 > fromStackHeight2)    // Von einem möglichst kleinen Stack wegnehmen
                                         {
                                             (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                                         }
@@ -122,7 +122,7 @@ namespace NutSort.Models
                                         {
                                             int toStackHeight1 = toStack1.Nuts.Count;
                                             int toStackHeight2 = toStack2.Nuts.Count;
-                                            if (toStackHeight1 < toStackHeight2)
+                                            if (toStackHeight1 < toStackHeight2)    // Auf einen möglichst hohen Stack verschieben
                                             {
                                                 (PossibleMoves[moveNr1], PossibleMoves[moveNr2]) = (PossibleMoves[moveNr2], PossibleMoves[moveNr1]);
                                             }
@@ -142,8 +142,7 @@ namespace NutSort.Models
             if (nutColor is null) { return count; }
             foreach (Stack stack in Stacks)
             {
-                if (stack.TopNut is null) { break; }
-                else if (stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
+                if (stack.TopNut is not null && stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
             }
             return count;
         }
