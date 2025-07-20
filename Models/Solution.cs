@@ -89,9 +89,40 @@ namespace NutSort.Models
             }
         }
 
-        public bool IsSolving { get; set; } = false;
+        [JsonIgnore] public double Progress
+        {
+            get
+            {
+                double progress = 0;
+                if (Boardstates.Count == 0) { return 0; }
+                if (IsFinished) { return 1; }
+                List<(double, double)> progressBoardstates = [];
+                for (int boardstateNr = Boardstates.Count - 1; boardstateNr >= 0; boardstateNr--)
+                {
+                    if (boardstateNr < Boardstates.Count)
+                    {
+                        int moveIndex = Boardstates[boardstateNr].NextMoveIndex - 1;
+                        int possibleMovesCount = Boardstates[boardstateNr].PossibleMoves.Count;
+                        progressBoardstates.Add((possibleMovesCount, moveIndex));
+                    }
+                }
+                double factor = 1;
+                for (int boardstateNr = Boardstates.Count - 1; boardstateNr >= 0; boardstateNr--)
+                {
+                    if (progressBoardstates[boardstateNr].Item1 > 0 && progressBoardstates[boardstateNr].Item2 >= 0)
+                    {
+                        double progressBoardstate = progressBoardstates[boardstateNr].Item2 / progressBoardstates[boardstateNr].Item1;
+                        progress += progressBoardstate * factor;
+                        factor = factor / progressBoardstates[boardstateNr].Item1;
+                    }
+                }
+                return progress;
+            }
+        }
 
-        private bool isAllowedToSolve = true;
+        [JsonIgnore] public bool IsSolving { get; set; } = false;
+
+        [JsonIgnore] private bool isAllowedToSolve = true;
 
         public void Solve()
         {

@@ -297,12 +297,38 @@ namespace NutSort.ViewModels
 
         public long IterationCount
         {
-            get { return solution?.IterationCount ?? -1; }
+            get
+            {
+                if (board is null || board.Solutions.Count == 0) { return -1; }
+                else if (Solution == board.InitialBoardstate)
+                {
+                    long totalIterationCount = 0;
+                    for (int _solutionNr = board.Solutions.Count - 1; _solutionNr >= 0; _solutionNr--)
+                    {
+                        if (_solutionNr < board.Solutions.Count) { totalIterationCount += board.Solutions[_solutionNr].IterationCount; }
+                    }
+                    return totalIterationCount;
+                }
+                return solution?.IterationCount ?? -1;
+            }
         }
 
         public int TotalProcessDurationSec
         {
-            get { return solution?.TotalProcessDurationSec ?? -1; }
+            get
+            {
+                if (board is null || board.Solutions.Count == 0) { return -1; }
+                else if (Solution == board.InitialBoardstate)
+                {
+                    int maxProcessDurationSec = 0;
+                    for (int _solutionNr = board.Solutions.Count - 1; _solutionNr >= 0; _solutionNr--)
+                    {
+                        if (_solutionNr < board.Solutions.Count && board.Solutions[_solutionNr].TotalProcessDurationSec > maxProcessDurationSec) { maxProcessDurationSec = board.Solutions[_solutionNr].TotalProcessDurationSec; }
+                    }
+                    return maxProcessDurationSec;
+                }
+                return solution?.TotalProcessDurationSec ?? -1;
+            }
         }
 
         public string State
@@ -318,15 +344,15 @@ namespace NutSort.ViewModels
                     }
                     else { return "Not started"; }
                 }
-                else if (solutionNr == 0)
+                else if (Solution == board.InitialBoardstate)
                 {
-                    if (board.IsFinished) { return "Board finished"; }
-                    else if (board.ShortestSolution is not null) { return "Solutions found"; }
-                    else { return "No solution found yet"; }
+                    if (board.IsFinished) { return "Board finished - 100%"; }
+                    else if (board.ShortestSolution is not null) { return "Solutions found - " + Math.Round(board.Progress * 100, 0).ToString() + "%"; }
+                    else { return "No solution found yet - " + Math.Round(board.Progress * 100, 0).ToString() + "%"; }
                 }
                 else if (solution is null) { return string.Empty; }
-                else if (solution.IsFinished) { return "Solution finished"; }
-                else { return "Solution is running"; }
+                else if (solution.IsFinished) { return "Solution finished - 100%"; }
+                else { return "Solution is running - " + Math.Round(solution.Progress * 100, 0).ToString() + "%"; }
             }
         }
 
@@ -419,11 +445,7 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(MaxColumnsCount));
             RaisePropertyChanged(nameof(SolutionCountStr));
             RaisePropertyChanged(nameof(StepCountStr));
-            RaisePropertyChanged(nameof(IterationCount));
-            RaisePropertyChanged(nameof(TotalProcessDurationSec));
-            RaisePropertyChanged(nameof(State));
-            RaisePropertyChanged(nameof(RunningCount));
-            RaisePropertyChanged(nameof(FinishedCount));
+            UpdateStats();
             boardstateRows = [];
             if (boardstate is not null)
             {
@@ -440,6 +462,26 @@ namespace NutSort.ViewModels
                 if (stacks.Count > 0) { boardstateRows.Add(new() { Stacks = stacks }); }
             }
             RaisePropertyChanged(nameof(BoardstateRows));
+        }
+
+        private void UpdateStats()
+        {
+            RaisePropertyChanged(nameof(IterationCount));
+            RaisePropertyChanged(nameof(TotalProcessDurationSec));
+            RaisePropertyChanged(nameof(State));
+            RaisePropertyChanged(nameof(RunningCount));
+            RaisePropertyChanged(nameof(FinishedCount));
+        }
+
+        private void ThreadUpdateStats()
+        {
+            while (board is not null && board.IsSolving)
+            {
+                Thread.Sleep(AnimationDelayMs);
+                UpdateStats();
+            }
+            Thread.Sleep(AnimationDelayMs);
+            UpdateStats();
         }
 
         private void PlayBoard(bool isManualLevelChange = false)
@@ -527,6 +569,7 @@ namespace NutSort.ViewModels
             IsPlaying = false;
             IsEditableBoard = false;
             board?.Solve();
+            new Thread(ThreadUpdateStats).Start();
         }
 
         private void LoadBoard()

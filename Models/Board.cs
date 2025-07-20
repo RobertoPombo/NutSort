@@ -125,6 +125,36 @@ namespace NutSort.Models
             }
         }
 
+        [JsonIgnore] public double Progress
+        {
+            get
+            {
+                double progress = 0;
+                if (Solutions.Count == 0) { return 0; }
+                if (IsFinished) { return 1; }
+                for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
+                {
+                    if (solutionNr < Solutions.Count)
+                    {
+                        progress += Solutions[solutionNr].Progress / (double)Solutions.Count;
+                    }
+                }
+                return progress;
+            }
+        }
+
+        [JsonIgnore] public bool IsSolving
+        {
+            get
+            {
+                for (int solutionNr = Solutions.Count - 1; solutionNr >= 0; solutionNr--)
+                {
+                    if (solutionNr < Solutions.Count && Solutions[solutionNr].IsSolving) { return true; }
+                }
+                return false;
+            }
+        }
+
         public void Solve()
         {
             ResetSolutions();
@@ -176,6 +206,16 @@ namespace NutSort.Models
                 List = JsonConvert.DeserializeObject<List<Board>>(File.ReadAllText(path, Encoding.Unicode)) ?? [];
                 GlobalValues.CurrentLogText = "Boards restored.";
                 NutColor.UpdateList();
+                /*foreach (Board board in List)
+                {
+                    if (board.InitialBoardstate is not null)
+                    {
+                        for (int boardstateNr = board.InitialBoardstate.Boardstates.Count - 1; boardstateNr >= 1; boardstateNr--)
+                        {
+                            board.InitialBoardstate.Boardstates.RemoveAt(boardstateNr);
+                        }
+                    }
+                }*/
             }
             catch { GlobalValues.CurrentLogText = "Restore boards failed!"; }
         }
