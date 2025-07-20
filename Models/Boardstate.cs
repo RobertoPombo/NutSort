@@ -52,6 +52,31 @@ namespace NutSort.Models
             }
         }
 
+        [JsonIgnore] public int MinimumRequiredMovesCount
+        {
+            get
+            {
+                int count = 0;
+                for (int stackNr1 = 0; stackNr1 < Stacks.Count - 1; stackNr1++)
+                {
+                    int nutsCount1 = Stacks[stackNr1].Nuts.Count;
+                    if (nutsCount1 > 0)
+                    {
+                        string nutColorName1 = Stacks[stackNr1].Nuts[0].NutColor.Name ?? string.Empty;
+                        for (int stackNr2 = stackNr1 + 1; stackNr2 < Stacks.Count; stackNr2++)
+                        {
+                            if (!Stacks[stackNr2].IsEmpty && nutColorName1 == Stacks[stackNr2].Nuts[0].NutColor.Name) { count++; }
+                        }
+                        for (int nutNr = nutsCount1 - 1; nutNr > 0; nutNr--)
+                        {
+                            if (Stacks[stackNr1].Nuts[nutNr].NutColor.Name != Stacks[stackNr1].Nuts[nutNr - 1].NutColor.Name) { count++; }
+                        }
+                    }
+                }
+                return count;
+            }
+        }
+
         public void UpdatePossibleMoves()
         {
             PossibleMoves = [];
@@ -142,7 +167,7 @@ namespace NutSort.Models
             if (nutColor is null) { return count; }
             foreach (Stack stack in Stacks)
             {
-                if (stack.TopNut is not null && stack.TopNut.NutColor.Name == nutColor.Name) { count += stack.TopNutCount; }
+                if (stack.TopNut is not null && stack.TopNut.NutColor.Name == nutColor.Name) { count += 1; }
             }
             return count;
         }
