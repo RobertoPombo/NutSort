@@ -508,8 +508,16 @@ namespace NutSort.ViewModels
 
         private void SelectStack(object obj)
         {
-            if (obj.GetType() == typeof(Stack) && boardstate is not null && solution is not null && move is not null)
+            if (obj.GetType() == typeof(Stack) && board is not null && boardstate is not null && solution is not null && move is not null)
             {
+                Stack stack = (Stack)obj;
+                int stackNr = boardstate.Stacks.IndexOf(stack);
+                if (solution != board.PlayerSolution)
+                {
+                    board.PlayerSolution = new(boardstate, board) { SolveStartTime = DateTime.Now };
+                    board.PlayerSolution.Boardstates[0].NextMoveIndex = 0;
+                    PlayerSolution();
+                }
                 int currentBoardstateNr = solution.Boardstates.IndexOf(boardstate);
                 if (currentBoardstateNr < solution.Boardstates.Count - 1)
                 {
@@ -518,8 +526,6 @@ namespace NutSort.ViewModels
                         solution.Boardstates.RemoveAt(boardstateNr);
                     }
                 }
-                Stack stack = (Stack)obj;
-                int stackNr = boardstate.Stacks.IndexOf(stack);
                 if (move.FromStackNr < 0 && boardstate.Stacks[stackNr].TopNut is not null)
                 {
                     move.FromStackNr = stackNr;

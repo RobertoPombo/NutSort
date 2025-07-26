@@ -97,7 +97,7 @@ namespace NutSort.Models
                 if (Boardstates.Count == 0) { return 0; }
                 if (IsFinished) { return 1; }
                 List<(double, double)> progressBoardstates = [];
-                for (int boardstateNr = Boardstates.Count - 1; boardstateNr >= 0; boardstateNr--)
+                for (int boardstateNr = Boardstates.Count - 1; boardstateNr >= 1; boardstateNr--)
                 {
                     if (boardstateNr < Boardstates.Count)
                     {
@@ -107,7 +107,7 @@ namespace NutSort.Models
                     }
                 }
                 double factor = 1;
-                for (int boardstateNr = Boardstates.Count - 1; boardstateNr >= 0; boardstateNr--)
+                for (int boardstateNr = progressBoardstates.Count - 1; boardstateNr >= 0; boardstateNr--)
                 {
                     if (progressBoardstates[boardstateNr].Item1 > 0 && progressBoardstates[boardstateNr].Item2 >= 0)
                     {
