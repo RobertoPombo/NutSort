@@ -460,8 +460,6 @@ namespace NutSort.ViewModels
             RaisePropertyChanged(nameof(ColorCount));
             RaisePropertyChanged(nameof(BoardColorCode));
             RaisePropertyChanged(nameof(MaxColumnsCount));
-            RaisePropertyChanged(nameof(SolutionCountStr));
-            RaisePropertyChanged(nameof(StepCountStr));
             UpdateStats();
             boardstateRows = [];
             if (boardstate is not null)
@@ -483,6 +481,8 @@ namespace NutSort.ViewModels
 
         private void UpdateStats()
         {
+            RaisePropertyChanged(nameof(SolutionCountStr));
+            RaisePropertyChanged(nameof(StepCountStr));
             RaisePropertyChanged(nameof(IterationCount));
             RaisePropertyChanged(nameof(TotalProcessDurationSec));
             RaisePropertyChanged(nameof(State));
