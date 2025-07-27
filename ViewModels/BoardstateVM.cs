@@ -28,6 +28,8 @@ namespace NutSort.ViewModels
             SaveBoardCmd = new UICmd((o) => SaveBoard());
             PreviousSolutionCmd = new UICmd((o) => PreviousSolution());
             NextSolutionCmd = new UICmd((o) => NextSolution());
+            FirstSolutionCmd = new UICmd((o) => FirstSolution());
+            LastSolutionCmd = new UICmd((o) => LastSolution());
             InitialBoardstateCmd = new UICmd((o) => InitialBoardstate());
             PlayerSolutionCmd = new UICmd((o) => PlayerSolution());
             ShortestSolutionCmd = new UICmd((o) => ShortestSolution());
@@ -807,6 +809,18 @@ namespace NutSort.ViewModels
             SolutionNr++;
         }
 
+        private void FirstSolution()
+        {
+            IsEditableBoard = false;
+            SolutionNr = 1;
+        }
+
+        private void LastSolution()
+        {
+            IsEditableBoard = false;
+            SolutionNr = Board?.Solutions.Count ?? 1;
+        }
+
         private void InitialBoardstate()
         {
             IsEditableBoard = false;
@@ -969,6 +983,8 @@ namespace NutSort.ViewModels
         public UICmd SaveBoardCmd { get; set; }
         public UICmd PreviousSolutionCmd { get; set; }
         public UICmd NextSolutionCmd { get; set; }
+        public UICmd FirstSolutionCmd { get; set; }
+        public UICmd LastSolutionCmd { get; set; }
         public UICmd InitialBoardstateCmd { get; set; }
         public UICmd PlayerSolutionCmd { get; set; }
         public UICmd ShortestSolutionCmd { get; set; }
