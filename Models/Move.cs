@@ -16,7 +16,7 @@ namespace NutSort.Models
             if (fromStack.TopNut is not null)
             {
                 NutColor topNutColor = fromStack.TopNut.NutColor;
-                while (fromStack.TopNut is not null && fromStack.TopNut.NutColor == topNutColor && toStack.Nuts.Count < boardstate.Solution.Board.StackHeight)
+                while (fromStack.TopNut is not null && fromStack.TopNut.NutColor == topNutColor && toStack.Nuts.Count < toStack.StackHeight)
                 {
                     toStack.Nuts.Add(fromStack.TopNut);
                     fromStack.Nuts.RemoveAt(fromStack.Nuts.Count - 1);

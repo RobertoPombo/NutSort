@@ -129,17 +129,31 @@ namespace NutSort.ViewModels
             }
         }
 
-        public byte StackHeight
+        public string StackHeight
         {
-            get { return board?.StackHeight ?? byte.MinValue; }
+            get
+            {
+                string stackHeight = string.Empty;
+                foreach (byte rowStackHeight in board?.StackHeight ?? []) { stackHeight += rowStackHeight.ToString() + " "; }
+                if (stackHeight.Length > 1) { stackHeight = stackHeight[..^1]; }
+                return stackHeight;
+            }
             set
             {
                 if (board is not null)
                 {
-                    board.StackHeight = value;
+                    board.StackHeight.Clear();
+                    value = value.Replace(".", " ").Replace(",", " ").Replace(":", " ").Replace(";", " ").Replace("/", " ").Replace("\\", " ").Replace("-", " ").Replace("_", " ").Replace("  ", " ");
+                    string[] rowList = value.Split(" ");
+                    for (int rowNr = 0; rowNr < rowList.Length; rowNr++)
+                    {
+                        if (byte.TryParse(rowList[rowNr], out byte stackHeight)) { board.StackHeight.Add(stackHeight); }
+                    }
+                    if (board.StackHeight.Count == 0) { board.StackHeight = [1]; }
                     if (boardstate is not null) { board.CreateInitialBoardstate(boardstate.Id); }
                     EditBoard();
                 }
+                RaisePropertyChanged();
             }
         }
 
@@ -206,6 +220,7 @@ namespace NutSort.ViewModels
                     }
                     EditBoard();
                 }
+                RaisePropertyChanged();
             }
         }
 
@@ -694,7 +709,7 @@ namespace NutSort.ViewModels
                 {
                     selectedNutStackNr++;
                     while (selectedNutStackNr < boardstate.Stacks.Count && boardstate.Stacks[selectedNutStackNr].IsFull) { selectedNutStackNr++; }
-                    if (selectedNutStackNr < boardstate.Stacks.Count && boardstate.Stacks[selectedNutStackNr].Nuts.Count < board.StackHeight) { selectedNutNr = boardstate.Stacks[selectedNutStackNr].Nuts.Count; }
+                    if (selectedNutStackNr < boardstate.Stacks.Count && boardstate.Stacks[selectedNutStackNr].Nuts.Count < boardstate.Stacks[selectedNutStackNr].StackHeight) { selectedNutNr = boardstate.Stacks[selectedNutStackNr].Nuts.Count; }
                     if (selectedNutNr > -1) { boardstate.Stacks[selectedNutStackNr].Nuts.Add(new(newNutColor)); }
                     RaisePropertyChanged(nameof(NutColors));
                 }

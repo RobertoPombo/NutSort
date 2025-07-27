@@ -12,7 +12,7 @@ namespace NutSort.Models
         public static List<Board> List { get; set; } = [];
 
         public Board() { }
-        public Board(byte stackCount, byte stackHeight, byte nutSameColorCount, byte colorCount, List<byte> maxColumnsCount, string? _levelName = null)
+        public Board(byte stackCount, List<byte> stackHeight, byte nutSameColorCount, byte colorCount, List<byte> maxColumnsCount, string? _levelName = null)
         {
             StackCount = stackCount;
             StackHeight = stackHeight;
@@ -53,21 +53,26 @@ namespace NutSort.Models
             {
                 if (value < 2) { value = 2; }
                 if (value < colorCount) { value = colorCount; }
-                if (colorCount * nutSameColorCount > value * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / stackHeight) + 1)); }
+                if (colorCount * nutSameColorCount > value * AverageStackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / AverageStackHeight) + 1)); }
                 stackCount = value;
+                UpdateStackHeights();
             }
         }
 
-        private byte stackHeight = 1;
-        public byte StackHeight
+        private List<byte> stackHeight = [];
+        public List<byte> StackHeight
         {
             get { return stackHeight; }
             set
             {
-                if (value < 2) { value = 2; }
-                if (value < nutSameColorCount) { value = nutSameColorCount; }
-                if (colorCount * nutSameColorCount > value * stackCount - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / stackCount) + 1)); }
+                for (int rowNr = 0; rowNr < value.Count; rowNr++)
+                {
+                    if (value[rowNr] < 1) { value[rowNr] = 1; }
+                    if (value[rowNr] < nutSameColorCount) { value[rowNr] = nutSameColorCount; }
+                }
                 stackHeight = value;
+                if (colorCount * nutSameColorCount > AverageStackHeight * stackCount - 1) { stackHeight = [(byte)Math.Min(byte.MaxValue, Math.Floor((double)colorCount * nutSameColorCount / stackCount) + 1)]; }
+                UpdateStackHeights();
             }
         }
 
@@ -78,8 +83,8 @@ namespace NutSort.Models
             set
             {
                 if (value < 1) { value = 1; }
-                if (value > stackHeight) { value = stackHeight; }
-                if (value * colorCount > stackCount * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * stackHeight / colorCount, 0) - 1)); }
+                if (value > MaximumSameColorCount) { value = MaximumSameColorCount; }
+                if (value * colorCount > stackCount * AverageStackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * AverageStackHeight / colorCount, 0) - 1)); }
                 nutSameColorCount = value;
             }
         }
@@ -93,7 +98,7 @@ namespace NutSort.Models
                 if (value < 1) { value = 1; }
                 if (value > NutColor.List.Count) { value = (byte)NutColor.List.Count; }
                 if (value > stackCount) { value = stackCount; }
-                if (value * nutSameColorCount > stackCount * stackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * stackHeight / nutSameColorCount, 0) - 1)); }
+                if (value * nutSameColorCount > stackCount * AverageStackHeight - 1) { value = (byte)(Math.Min(byte.MaxValue, Math.Round((double)stackCount * AverageStackHeight / nutSameColorCount, 0) - 1)); }
                 colorCount = value;
             }
         }
@@ -109,6 +114,34 @@ namespace NutSort.Models
                     if (value[rowNr] < 1) { value[rowNr] = 1; }
                 }
                 maxColumnsCount = value;
+            }
+        }
+
+        [JsonIgnore] public double AverageStackHeight
+        {
+            get
+            {
+                if (stackHeight.Count == 0) { return 1; }
+                byte totalStackHeight = 0;
+                foreach (byte _stackHeight in stackHeight) { totalStackHeight += _stackHeight; }
+                return (double)totalStackHeight / stackHeight.Count;
+            }
+        }
+
+        [JsonIgnore] public byte MaximumSameColorCount
+        {
+            get
+            {
+                for (int index1 = 0; index1 < stackHeight.Count - 1; index1++)
+                {
+                    for (int index2 = index1 + 1; index2 < stackHeight.Count; index2++)
+                    {
+                        if (stackHeight[index1] < stackHeight[index2]) { (stackHeight[index1], stackHeight[index2]) = (stackHeight[index2], stackHeight[index1]); }
+                    }
+                }
+                if (stackHeight.Count == 0) { return 1; }
+                else if (stackHeight.Count > colorCount) { return stackHeight[colorCount - 1]; }
+                else { return stackHeight[stackHeight.Count - 1]; }
             }
         }
 
@@ -252,7 +285,7 @@ namespace NutSort.Models
                 slotsCount++;
                 NutColor? nutColor = NutColor.GetByName(ids[nutNr]);
                 if (nutColor is not null) { nuts.Add(new(nutColor)); }
-                if (slotsCount >= stackHeight)
+                if (slotsCount >= stackHeight[Math.Min(stacks.Count, stackHeight.Count - 1)])
                 {
                     stacks.Add(new() { Nuts = nuts });
                     if (stacks.Count >= stackCount) { break; }
@@ -266,6 +299,7 @@ namespace NutSort.Models
             string emptyId = string.Empty;
             for (int stackNr = 0; stackNr < StackCount; stackNr++) { emptyId += "#|"; }
             int idLength = Math.Max(0, Math.Min(emptyId.Length - 1, id?.Length ?? 0));
+            UpdateStackHeights();
             if (!string.IsNullOrEmpty(id) && id[..idLength] != emptyId[..idLength])
             {
                 FillInitialBoardstate();
@@ -291,7 +325,7 @@ namespace NutSort.Models
                     int stackNr = 0;
                     while (nutColorsCount[nutColor] < NutSameColorCount)
                     {
-                        if (stacks[stackNr].Nuts.Count < StackHeight)
+                        if (stacks[stackNr].Nuts.Count < stacks[stackNr].StackHeight)
                         {
                             stacks[stackNr].Nuts.Add(new(nutColor));
                             nutColorsCount[nutColor]++;
@@ -338,13 +372,11 @@ namespace NutSort.Models
                     for (int stackNr1 = 0; stackNr1 < stackNr0; stackNr1++)
                     {
                         int slotNr0 = randomBoard.Stacks[stackNr0].Nuts.Count - 1;
-                        int slotNr1 = randomBoard.Stacks[stackNr1].Nuts.Count;
-                        while (slotNr0 >= 0 && slotNr1 < stackHeight)
+                        while (slotNr0 >= 0 && randomBoard.Stacks[stackNr1].Nuts.Count < stackHeight[stackNr1])
                         {
                             randomBoard.Stacks[stackNr1].Nuts.Add(randomBoard.Stacks[stackNr0].Nuts[slotNr0]);
                             randomBoard.Stacks[stackNr0].Nuts.RemoveAt(slotNr0);
                             slotNr0 -= 1;
-                            slotNr1 += 1;
                         }
                     }
                 }
@@ -360,6 +392,11 @@ namespace NutSort.Models
                     }
                 }
             }
+        }
+
+        public void UpdateStackHeights()
+        {
+            foreach (Solution solution in Solutions) { solution.UpdateStackHeights(); }
         }
 
         public override string ToString()

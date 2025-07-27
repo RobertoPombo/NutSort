@@ -51,6 +51,7 @@ namespace NutSort.Models
                 IterationCount = iterationCount;
                 TotalProcessDurationSec = totalProcessDurationSec;
                 SolveStartTime = boardstates[0].Solution.SolveStartTime;
+                UpdateStackHeights();
             }
         }
 
@@ -72,6 +73,7 @@ namespace NutSort.Models
             newBoardstate.Solution = this;
             foreach (Move move in initialBoardstate.PossibleMoves) { newBoardstate.PossibleMoves.Add(move); }
             newBoardstate.NextMoveIndex = initialBoardstate.NextMoveIndex;
+            UpdateStackHeights();
         }
 
         public List<Boardstate> Boardstates { get; set; } = [];
@@ -197,6 +199,11 @@ namespace NutSort.Models
             Boardstate state = Boardstates[^2];
             Nut? movedNut = state.Stacks[state.PossibleMoves[state.NextMoveIndex - 1].FromStackNr].TopNut;
             Boardstates.RemoveAt(Boardstates.Count - 1);
+        }
+
+        public void UpdateStackHeights()
+        {
+            foreach (Boardstate boardstate in Boardstates) { boardstate.UpdateStackHeights(); }
         }
 
         public override string ToString()

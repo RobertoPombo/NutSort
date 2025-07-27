@@ -10,13 +10,15 @@ namespace NutSort.Models
         public Boardstate Boardstate { get; set; } = new();
         public List<Nut> Nuts { get; set; } = [];
 
+        [JsonIgnore] public byte StackHeight { get; set; } = 1;
+
         [JsonIgnore] public List<byte> EmptyNutSlots
         {
             get
             {
                 List<byte> list = [];
-                int extraSlots = (int)Math.Floor((double)(Boardstate.Solution.Board.StackHeight + 3) / 10) + 1;
-                for (byte nutNr = 0; nutNr < Boardstate.Solution.Board.StackHeight + extraSlots; nutNr++) { list.Add(byte.MinValue); }
+                int extraSlots = (int)Math.Floor((double)(StackHeight + 3) / 10) + 1;
+                for (byte nutNr = 0; nutNr < StackHeight + extraSlots; nutNr++) { list.Add(byte.MinValue); }
                 return list;
             }
         }
@@ -56,12 +58,12 @@ namespace NutSort.Models
 
         [JsonIgnore] public bool IsFull
         {
-            get { return Nuts.Count == Boardstate.Solution.Board.StackHeight; }
+            get { return Nuts.Count == StackHeight; }
         }
 
         [JsonIgnore] public byte EmptySlotsCount
         {
-            get { return (byte)(Boardstate.Solution.Board.StackHeight - Nuts.Count); }
+            get { return (byte)(StackHeight - Nuts.Count); }
         }
 
         [JsonIgnore] public bool IsMonochromatic

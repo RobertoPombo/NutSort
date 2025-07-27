@@ -16,6 +16,7 @@ namespace NutSort.Models
                 Stack stack = new() { Nuts = nuts, Boardstate = this };
                 Stacks.Add(stack);
             }
+            UpdateStackHeights();
         }
 
         public Solution Solution { get; set; } = new();
@@ -28,11 +29,11 @@ namespace NutSort.Models
             get
             {
                 string id = string.Empty;
-                foreach (Stack stack in Stacks)
+                for (int stackNr = 0; stackNr < Stacks.Count; stackNr++)
                 {
-                    for (int nutNr = 0; nutNr < Solution.Board.StackHeight; nutNr++)
+                    for (int nutNr = 0; nutNr < Stacks[stackNr].StackHeight; nutNr++)
                     {
-                        if (nutNr < stack.Nuts.Count) { id += stack.Nuts[nutNr].NutColor.Name + "|"; }
+                        if (nutNr < Stacks[stackNr].Nuts.Count) { id += Stacks[stackNr].Nuts[nutNr].NutColor.Name + "|"; }
                         else { id += "#|"; }
                     }
                 }
@@ -65,7 +66,7 @@ namespace NutSort.Models
                         string nutColorName1 = Stacks[stackNr1].Nuts[0].NutColor.Name ?? string.Empty;
                         for (int stackNr2 = stackNr1 + 1; stackNr2 < Stacks.Count; stackNr2++)
                         {
-                            if (!Stacks[stackNr2].IsEmpty && nutColorName1 == Stacks[stackNr2].Nuts[0].NutColor.Name) { count++; }
+                            if (!Stacks[stackNr2].IsEmpty && nutColorName1 == Stacks[stackNr2].Nuts[0].NutColor.Name) { count++; break; }
                         }
                         for (int nutNr = nutsCount1 - 1; nutNr > 0; nutNr--)
                         {
@@ -170,6 +171,16 @@ namespace NutSort.Models
                 if (stack.TopNut is not null && stack.TopNut.NutColor.Name == nutColor.Name) { count += 1; }
             }
             return count;
+        }
+
+        public void UpdateStackHeights()
+        {
+            for (int stackNr = 0; stackNr < Stacks.Count; stackNr++)
+            {
+                List<byte> stackHeight = Solution.Board.StackHeight;
+                if (stackHeight.Count > stackNr) { Stacks[stackNr].StackHeight = stackHeight[stackNr]; }
+                else { Stacks[stackNr].StackHeight = stackHeight[^1]; }
+            }
         }
 
         public override string ToString()
