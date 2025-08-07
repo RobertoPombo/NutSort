@@ -372,7 +372,7 @@ namespace NutSort.Models
                     for (int stackNr1 = 0; stackNr1 < stackNr0; stackNr1++)
                     {
                         int slotNr0 = randomBoard.Stacks[stackNr0].Nuts.Count - 1;
-                        while (slotNr0 >= 0 && randomBoard.Stacks[stackNr1].Nuts.Count < stackHeight[stackNr1])
+                        while (slotNr0 >= 0 && randomBoard.Stacks[stackNr1].Nuts.Count < randomBoard.Stacks[stackNr1].StackHeight)
                         {
                             randomBoard.Stacks[stackNr1].Nuts.Add(randomBoard.Stacks[stackNr0].Nuts[slotNr0]);
                             randomBoard.Stacks[stackNr0].Nuts.RemoveAt(slotNr0);
