@@ -315,10 +315,8 @@ namespace NutSort.Models
                 List<Stack> stacks = InitialBoardstate.Boardstates[0].Stacks ?? [];
                 while (nutColorsCount.Keys.Count < ColorCount)
                 {
-                    foreach (NutColor nutColor in NutColor.List)
-                    {
-                        if (!nutColorsCount.ContainsKey(nutColor)) { nutColorsCount[nutColor] = 0; break; }
-                    }
+                    int colorNr = random.Next(NutColor.List.Count);
+                    if (!nutColorsCount.ContainsKey(NutColor.List[colorNr])) { nutColorsCount[NutColor.List[colorNr]] = 0; }
                 }
                 foreach (NutColor nutColor in nutColorsCount.Keys)
                 {
